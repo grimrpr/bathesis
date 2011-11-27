@@ -1,0 +1,53 @@
+\renewcommand{\maketitle}{
+    \begin{center}
+        \vspace{.5em}
+        {\huge {\textemdash \@title \textemdash}}
+        \vspace{1em}
+    \end{center}
+}
+
+\newcommand{\milestone}[3]{%
+\subsection*{#1}%
+#2 \hfill #3%
+}
+
+
+\newcommand{\studentName}[1]{\def\@studentName{#1}}
+\newcommand{\studentEmail}[1]{\def\@studentEmail{#1}}
+\newcommand{\studentPhone}[1]{\def\@studentPhone{#1}}
+
+\newcommand{\profName}[1]{\def\@profName{#1}}
+\newcommand{\profEmail}[1]{\def\@profEmail{#1}}
+\newcommand{\profPhone}[1]{\def\@profPhone{#1}}
+
+\def\@profName{Prof. Dr. rer. nat. Mesut G\"une\c{s}}
+\def\@profEmail{guenes@inf.fu-berlin.de}
+\def\@profPhone{+49 30 838 75245}
+
+\newcommand{\assistentName}[1]{\def\@assistentName{#1}}
+\newcommand{\assistentEmail}[1]{\def\@assistentEmail{#1}}
+\newcommand{\assistentPhone}[1]{\def\@assistentPhone{#1}}
+
+\newcommand{\student}{%
+\subsection{Student}%
+\begin{tabular}{rl}
+    Name:   & \@studentName \\
+    Email:	& \href{mailto:\@studentEmail}{\@studentEmail} \\
+    Phone:  & \@studentPhone
+\end{tabular}}
+
+\newcommand{\prof}{%
+\subsection{Professor}%
+\begin{tabular}{rl}
+    Name:   & \@profName \\
+    Email:  & \href{mailto:\@profEmail}{\@profEmail} \\
+    Phone:  & \@profPhone
+\end{tabular}}
+
+\newcommand{\assistent}{%
+\subsection{Assistent}%
+\begin{tabular}{rl}
+    Name:   & \@assistentName \\
+    Email:  & \href{mailto:\@assistentEmail}{\@assistentEmail} \\
+    Phone:  & \@assistentPhone
+\end{tabular}}
