@@ -1,0 +1,47 @@
+Gliederung und inhaltiche Ansätze
+
+(0. Zusammenfassung/Abstract)
+
+1.Motivation
+  - Kontext herstellen
+    -Lokalisierung indoor
+    -Anwendungen/Nutzen indoor Lokalisierung
+    -Sensorknoten (WSN) 
+
+  - Bedarf für praktische Tests/ Referenzsystem erläutern
+  - Strukturierung der Arbeit darstellen
+  
+
+2. Aufgabenstellung
+  - Abgrenzung der Arbeit zum gesamt Referenzsystem
+  - mögliche Lösungsansätze für Implementierung aufzeigen/abwägen
+      - Was kann / kann der gewählte Ansazt
+  - Ziele von Pathcompare
+
+
+3. Implementierung
+  - Technischer Rahmen
+      -ROS
+      -Qt
+  - GUI & Features zeigen
+  - Pathcompare Design
+    -Struktur der Software
+      (Rahmen, Plug-ins)
+
+    -Main Compare Plug-in erläutern
+       -Pfadvergleichsverfahren erläutern (Interpolation)
+      
+    -Plug-in Konzept anhand von Camera View plug-in zeigen
+        -allgemein Qt Plugins
+        -Vorstellen der Interfaces zum Schreiben eigener Plug-ins für Pathcompare
+
+
+4. Anwendungsfall
+  - typischer Anwendungsfall
+  - Tests
+
+
+5. Fazit und Ausblick
+  - Verbesserungen
+  - Probleme
+  - ToDos

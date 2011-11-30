@@ -1,2 +1,25 @@
-*.*~
+*~
+*.acn
+*.acl
+*.acr
+*.alg
+*.aux
+*.bat
+*.glg
+*.glo
+*.gls
+*.ist
+*.lof
+*.log
+*.lol
+*.lot
+*.out
+*.pdfsync
+*.toc
+*.swp
+Anmeldung/
+bin/
+Paper/
+.svn/
+Thesis-Management/
 

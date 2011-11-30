@@ -1,0 +1,83 @@
+\section{Aufgabenstellung}
+\label{sec:aufgabenstellung}
+
+Im folgenden wird der grundelegende Aufbau des Referenzsystems beschrieben und
+wie sich Pathcompare in dessen Topologie einfügt. 
+
+Auf der Ebene der Hardware steht der mobile Roboter. Dieser hat das Ziel sich
+genau zu lokalisieren um Referenzwerte für die montierten, mobilen Sensorknoten zu
+liefern. Da er sich während der Testfahren natürlich indoor bewegt, kann er
+für seine Lokalisierung keine satelliten-gestützten Lokalisierungssysteme wie
+GPS verwenden, aus den in \ref{motivation} genannten Gründen. Zwei weitere
+Ansätze, um die Bewegung des Roboters nachzuvollziehen und somit Positionsdaten
+zu gewinnen sind:
+
+\begin{itemize}
+  \item Inertial Navigation
+  \item Odometrie
+\end{itemize}
+
+Bei der intertial Navigation wird mithilfe von Beschleunigungs- und
+Gyromessungen auf die ausgeführte Bewegung geschlossen. Diese Messungen lassen
+sich druch \gls{MEMS}, die in einer 
+\gls{IMU} zusammengefasst werden durchführen.
+\gls{MEMS} werden in großen Stückzahlen produziert und sind kostengünstig.
+Typischerweise sind aber die Messungen, auch bei Stillstand, durch Jitter belastet.
+Dieser kann zwar durch geeignete Filter geglättet werden, lässt sich allerdings
+nicht ganz ausschließen. Auf längere Strecken entsteht durch die Aufsummierung
+der Fehler ein Drift, fort von der tatsächlichen Position.
+
+Bei der Odometrie, werden die Antriebsdaten ausgewertet, um auf die Bewegung
+des Roboters zu schließen. Geht man davon aus, dass der Untergrund, auf dem der
+Roboter fährt, für dessen Räder geeignet ist und die Räder nicht wegen
+beispielsweise mangelnder Bodenhaftung stark durchdrehen. So kann sie auf
+kurzen Strecken sehr genaue Abschätzungen liefern. Allerdings ist auch eine Odometriemessung
+stets mit einem Fehler behaftet. Dieser Fehler summiert sich über die Zeit auf
+und die geschätzte Position weicht immer weiter von der tatsächlichen ab. Man
+hat also auf längeren Strecken ebenfalls mit einem Drift zu rechnen.
+
+Beide Methoden haben gemeinsam, dass sie unabhängig von Informationen aus der
+Umgebung des Roboters arbeiten. Somit können sie allerdings den beschriebenen
+Drift in der Lokalisierung niemals korrigieren, da sie nicht die Positions auf
+Plausibilität mit der Umgebung abgleichen. 
+Für das Referenzsystem ist Drift aber nicht akzeptabel. Aus diesem Grund
+erfasst der Roboter Abstände zu Hindernissen seiner Umgebung mithilfe einer
+\textit{Microsoft Kinect}. Die Kinect erstellt mithilfe eines, im infrarot
+Bereich, gestrahltem optisches Muster ein Tiefenbild. 
+Die Reichweite liegt bei maximal 10 Meter Entfernung mit
+einem Blickwinkel von ca $59^{\circ}$. Test haben gezeigt, dass die Genauigkeit der
+Tiefehmessung mit zunehmender Entfernung abnimmt, aber im Nahbereich
+überraschend Präzise ist.
+Außerdem verfügt der Roboter über eine Karte der
+Testumgebung. Während einer Testfahrt werden für
+eine Lokalisierung letzendlich folgende entscheidende Schritte ausgeführt:
+
+\begin{itemize}
+  \item Abschätzung der derzeitigen Pose durch Odometrie
+  \item Abgleich mit Karte und Korrektur der Pose
+\end{itemize}
+
+Zum Abtasten der Umgebung hätte alternativ auch ein Laserscanner gewählt werden
+können, dies wäre aber entgegen der Ziele des Referenzsystems mit zu hohen
+Anschaffungskosten verbunden gewesen. Im Sinne günstiger Kosten wurde 
+letzendlich ein sogenannter \textit{TurtleBot} gebaut. Dies ist ein
+von \textit{WillowGarage} spezifizierter low-cost Roboter. Im Kern
+besteht dieser aus einem \textit{Roomba} Staubsaugerroboter von \textit{iRobot}, einer
+\textit{Microsoft Kinect} und ein Tragegerüst. Das Tragegerüst dient als
+Abstellfläche für einen Laptop und bietet im Anwendungsfall des Referenzsystems
+Platz zum Montieren der Sensorknoten.
+
+%TODO Figure TurtleBot einfügen
+%\begin{figure}[<+htpb+>]
+%  \begin{center}
+%    \psfig{figure=<+eps file+>}
+%  \end{center}
+%  \caption{<+caption text+>}
+%  \label{fig:<+label+>}
+%\end{figure}<++>
+
+Softwareseitig wird der Roboter innerhalb von \gls{ROS} betrieben. Dieser
+Aspekt wurde innerhalb einer anderen Bachelorarbeit im Rahmen der Entwicklung des
+Referenzsystems ausführlich erarbeitet. 
+sich mit der Einrichtung der Software für
+den Roboter sowie mit dem 
