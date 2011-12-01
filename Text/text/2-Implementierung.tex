@@ -1,2 +1,68 @@
-\section{Implementierung}
+\chapter{Pathcompare - Implementierung}
 \label{sec:implementierung}
+\section{Technischer Rahmen}
+
+\subsection{Robot Operating System - ROS}
+\begin{itemize}
+  \item Warum brauchen wir ROS?
+  \item Wer entwickelt ROS? (Stanford University \& WillowGarage \& community)
+  \item Was sind die Grundeigenschaften 
+  \item multitool Ansatz
+  \item strukturierte Kommunikation zwischen den Tools
+  \item free and open source
+  \item multilingual 
+  \item Begrifflichkeiten des ROS (Stack, Package, Node, Master, Topic, Message)
+  \item Topologie (figure: Roboter, Master, Pathcompare , Sensorknoten)
+  \item standard Buildsystem cmake
+\end{itemize}
+
+\subsection{Qt}
+\begin{itemize}
+  \item Warum brauchen wir Qt
+  \item GUI framework, native in C++ (auch Implementierungen für Java, Ruby,..)
+  \item bietet auch zahlreiche nicht GUI spezifische Funktionalität
+  \item cross platform
+  \item native UI rendering
+  \item UI designing with Qt Designer
+  \item bereichert C++ durch embedded Macros (z.B. signal\&slot) -> moc compiler
+  \item standard Buildsystem native qmake 
+  \item Unterstützung für cmake gegeben, für große Projekte sogar empfohlen
+\end{itemize}
+
+
+\section{Design der Software}
+Der Hauptfokus beim Design der GUI lag darauf, einfache Benutzung und
+übersichtliche Testdatendarstellung, für den Nutzer zu gewährleisten.
+Außerdem sollte die Software leicht erweiterbar sein.
+
+\subsection{Überblick Gesamtsystem}
+%screenshots: TopicView  sowie Gesamtansicht mit
+\begin{itemize}
+  \item Rahmen mit Topic TreeView
+  \item Anbindung an ROS durch ROSManager
+  \item TabFlächen für einzelne PlugIns
+  \item PluginLoader lädt Plugins
+\end{itemize}
+
+\subsection{Plug-in Main Compare}
+%screenshot des Plugins
+\begin{itemize}
+  \item Funktionen erklären
+  \item Referenz Pfad Selektion
+  \item Export (+Format der csv Datei)
+  \item Tabellenansicht erklären
+\end{itemize}
+
+\subsubsection{Pfadvergleichsverfahren}
+
+%bild test mit Tickgeber
+
+%bild variante ohne tick
+
+%bild nav_msgs/Path message
+\subsection{Plug-in Konzept allgemein}
+\begin{itemize}
+  \item allgemein Qt Plugins
+  \item Vorstellen der Interfaces zum Schreiben eigener Plug-ins für Pathcompare
+  \item Beispiel Camera Plugin
+\end{itemize}
