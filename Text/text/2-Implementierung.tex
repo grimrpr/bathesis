@@ -128,15 +128,16 @@ Ein \textit{package} beinhaltet den Code, Libraries sowie die ausführbare Datei
 tools bzw. \textit{nodes}.
 In \gls{ROS} sind für packages bestimmte Ordnerstrukturen und Dateien
 festgelegt sodass mithilfe der von \gls{ROS} mitgebrachten tools \textit{packages}
-leicht gebaut, gesucht und gestartet werden können. Beispielsweise basiert das \gls{ROS}
+leicht gebaut, gesucht und gestartet werden können. Beispielsweise basiert das 
 \gls{ROS} build System auf cmake und so ist eine vorkonfigurierte
 \textit{CMakeLists.txt} in jedem \textit{package} grundsätzlich enthalten. Eine Zusammenfassung mehrerer
-\textit{packages} wird als stack bezeichnet. 
+\textit{packages} wird als \textit{stack} bezeichnet. 
 
 \textit{Pathcompare} ist also im Bezug auf \gls{ROS}, während der Ausführung, ein
-einzelner \textit{node} welcher \textit{topics} abboniert. Es wird in einem
-späteren Teil darauf eingegangen welche \textit{messages} das genau sind.
-Die Dateien sind dabei in zwei \textit{packages} namens \textit{pathcompare}
+einzelner \textit{node} welcher \textit{topics} abboniert um \textit{messages}
+zu empfangen. Es wird in einem
+späteren Teil darauf eingegangen, welche \textit{messages} das genau sind.
+Alle zum Kompilieren und Ausführen nötige Dateien sind dabei in zwei \textit{packages} namens \textit{pathcompare}
 und \textit{pathcompareplugins} aufgeteilt.
 
 %TODO figure einfügen referenzsystem im ros
@@ -151,12 +152,82 @@ und \textit{pathcompareplugins} aufgeteilt.
   \item multilingual 
   \item Begrifflichkeiten des ROS (Stack, Package, Node, Master, Topic, Message)
   \item Topologie (figure: Roboter, Master, Pathcompare , Sensorknoten)
+  \item plattformen: Ubuntu
   \item standard Buildsystem cmake
 \end{itemize}
 
 \subsection{Qt}
+
+\textit{Pathcompare} ist darauf ausgelegt alle Informationen für den Nutzer in
+einer Benutzeroberfläche (fortan als GUI bezeichnet) zu visualisieren.
+Da die Anbindung an \gls{ROS} über C++ erfolgt, lag nahe auch die GUI in C++
+umzusetzen. Dazu wurde das Qt Framework gewählt. Qt ist in C++ implementiert, wobei
+allerdings auch Anbindungen für zahlreiche andere Sprachen wie z.B.
+Java, C\#, Ruby oder Python existieren. Die Entwicklung von Qt begann 1991 und
+%TODO Quelle anbringen
+%http://my.safaribooksonline.com/0131872494/pref04?portal=oreilly#X2ludGVybmFsX0ZsYXNoUmVhZGVyP3htbGlkPTAxMzE4NzI0OTQveGlpaQ==
+ist zum Zeitpunkt des Schreibens in der Version 4.7.4 verfügbar. Das Framework besteht dabei
+mittlerweile nicht mehr nur aus reinen GUI Bibliotheken, sondern stellt auch
+z.B. Netzwerk-, SQL- und andere Anwendungs-Bibliothken zur Verfügung.
+
+Für die Entwicklung von \textit{Pathcompare} waren neben den GUI Bibliotheken,
+besonders folgende Konzepte und Funktionen beim Entwickeln vorteilhaft: 
+
 \begin{itemize}
-  \item Warum brauchen wir Qt
+  \item Signal-Slot Konzept
+  \item Plattformunabhängigkeit
+  \item Containerklassen mit praktischen Hilfsmethoden
+  \item graphischer GUI Designer 
+\end{itemize}
+
+Auf einige dieser Punkte und deren Bezug zu Pathcompare wird nun kurz eingangen.
+
+Das \textit{Signal-Slot} Konzept dient dazu Objekten, bestimmte Veränderungen an Objekten
+mitzuteilen, welche über diese Änderung informiert werden sollen.
+Es realisiert das Entwurfsmuster des \textit{Observer patterns}. 
+\textit{Signal-Slot} erspart es dem Programmierer einen Verweis auf das beobachtende
+Objekt, durch einen registrierenden Methodenaufruf beim aktualisierenden
+Objekt, zu hinterlegen. Stattdessen emittiert, im Falle einer mitzuteilenden
+Aktualisierung, das aktualisierende Object einen Methode, welche durch
+einen Qt Makro als \textit{signal} ausgezeichnet ist. Bei Beobachter Objekten,
+die auf dieses Signal reagieren sollen, wird dann eine als \textit{slot}
+deklarierte Methode selbständig aufgerufen, sofern die Objekte, durch einen
+Aufruf einer von Qt bereitgestellten, statischen Methode, verbunden wurden. 
+Dieses Konzept vereinfacht die Entwicklung wegen seiner Flexibilität deutlich, allerdings ist der durch
+Qt erzeugte Code, welcher bei Auflösung der Makros entsteht, aufblähend und
+dadurch theoretisch langsamer bei der Ausführung als eine klassische callback Implementierung.
+In der Praxis ist diese Verlangsamung aber unmerklich und wiegt nicht die
+Vorteile für den Entwickler auf. Deshalb wurde das Konzept auch bei der Entwicklung von
+\textit{Pathcompare} eingesetzt. 
+
+Im Zusammenhang mit dem Signal-Slot Konzepts wurde bereits erwähnt, dass Qt C++
+mit verschiedenen Makros erweitert. Diese Makros werden dabei nicht immer
+direkt in gültigen C++ Code übersetzt, sondern dienen als Annotationen. Dies
+hat Folgen für den Build Vorgang, denn die mit Annotationen versehenen Klassen
+müssen dann zuerst, mit dem von Qt bereitgestelltem \gls{MOC} übersetzt werden.
+Standardmäßig wird in \textit{Qt} das Build Programm qmake verwendet, welches
+die nötigen Aufrufe des \gls{MOC} automatisch veranlasst. In Hinblick auf
+\textit{Pathcompare} war aber eine Integration in das von \gls{ROS}
+unterstützte Build verfahren cmake notwendig. Hierbei muss beachtet werden,
+dass cmake die Dateien welche einen \gls{MOC} Aufruf notwendig machen, in der
+derzeitigen Version, nicht selbständig erkennt. Diese müssen manuell in der
+\textit{CmakeLists.txt} deklariert werden. Die sonstige Einbindung
+\textit{Qt} spezifischer Libraries und deren Verlinkung mit der Applikation ist
+in cmake leicht möglich. Somit war die Verwenung von Qt in
+\textit{pathcompare} kein Hindernis für die Verwendung von cmake.
+Die Nutzung von cmake wird darüberhinaus, für große Projekte, von Autoren im
+Rahmen der Qt Dokumentation selbst empfohlen.
+%TODO Quelle anbringen?
+
+Neben dem \gls{MOC} existiert noch ein sogenannter \gls{UIC}. Dieser tritt im
+Zusammenhang mit dem \textit{QtDesigner} in Erscheinung. Der
+\textit{QtDesigner} ermöglicht es graphisch Qt GUIs zu erstellen. Dabei wird
+eine XML datei vom Designer erstellt, welche den Aufbau der GUI abbildet.
+Der UIC ist dann dafür verantwortlich diese Datei in C++ Klassen zu übersetzen.
+Auch hier muss cmake veranlasst werden zunächst den gls{UIC} aufzurufen.
+
+\begin{itemize}
+  \item Warum braucht Pathcompare Qt?
   \item GUI framework, native in C++ (auch Implementierungen für Java, Ruby,..)
   \item bietet auch zahlreiche nicht GUI spezifische Funktionalität
   \item cross platform
