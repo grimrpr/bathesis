@@ -3,6 +3,144 @@
 \section{Technischer Rahmen}
 
 \subsection{Robot Operating System - ROS}
+
+Innerhalb des Referenzsystems wird \gls{ROS} im Zusammenhang mit der
+Steuerung des Roboters genutzt und um die, während einer Testfahrt gewonnenen Pfaddaten,
+zur Verfügung zu stellen. Im Folgenden wird genauer auf die Fähigkeiten und
+Ziele von \gls{ROS} eingegangen.
+
+Obwohl der Name zunächst anderes vermuten lässt ist \gls{ROS} kein Betriebssystem im
+klassischem Sinne. Es ist ein Framework, welches auf ein Betriebssystem
+angewiesen ist um ausgeführt werden zu können. Es bietet aber Funktionalitäten,
+die abstrahiert betrachtet Betriebsystemfunktionen ähneln. Charakteristisch ist
+hierbei \gls{ROS} Fähigkeit lokal- oder nichtlokalausgeführte Programme zu Verbinden und
+eine strukturierte Kommunikation zwischen diesen zu ermöglichen. Die
+wesentlichen Elementareigenschaften der Grundphilosophie sind:
+
+\begin{itemize}
+  \item multi-tool Ansatz
+  \item peer-to-peer Kommunikation
+  \item keine feste Bindung an Programmiersprache
+  \item frei und Open-Source
+\end{itemize}
+
+Multi-tool Ansatz bedeutet, dass \gls{ROS} die Fähigkeiten verschiedener
+Programme und Libraries zur Verfügung stellt. Diese sind jedoch nicht fest in
+den Kern von \gls{ROS} eingebaut sondern modular integriert. Als analoges Beispiel in
+Hinblick auf Betriebssysteme kann man \gls{ROS} also als einen Mikrokernel
+verstehen. Dies bietet den Vorteil, dass \gls{ROS} selbst vergleichsweise klein
+ist und nur wirklich gebrauchte tools geladen werden müssen.
+Die peer-to-peer Kommunikation bezieht sich auf die Kommunikation
+zwischen diesen, in \gls{ROS} integrierten, Modulen. Diese wird durch den \gls{ROS}
+Kern gesteuert. Der Kern von \gls{ROS} ist nativ in C++ implementiert, es
+existieren jedoch bereits Portierungen in andere Sprachen wie Python, Octave
+und Lisp um die \gls{ROS}-\gls{API} einer größeren Zahl von Entwicklern und
+Projekten die Nutzung zu ermöglichen. Weitere Portierungen sollen sich in der Implementierung befinden.
+
+%TODO hier Referenz zu ROS paper bringen oder später?
+
+\gls{ROS} ist darüberhinaus frei Verfügbar und Open-Source. Man kann beliebige
+Programme, als Module zur Erweiterung und Nutzung von \gls{ROS} hinzufügen, wie
+es auch im Rahmen des Referenzsystems geschehen ist. Bei allgemeinem Nutzem und gegebener
+Pflege, besteht die Möglichkeit, dass diese offiziell zu ROS hinzugefügt werden.
+
+Um die konkreten Abläufe und Komponenten innerhalb von \gls{ROS} 
+veranschaulichen zu können und damit auch den Bezug zu Pathcompare herstellen
+zu können, ist es zunächst erforderlich die Begrifflichkeiten innerhalb von
+\gls{ROS} zu klären. Im Folgendem werden diese aufgezeigt.
+
+%TODO figure ROS Komponenten hinzufügen und im Text referenzieren
+Im Zentrum von ROS steht der sogenannte \textit{master}. Dieser wird als
+einzelne Instanz gestartet und wartet dann darauf, dass sich tools, die im
+Kontext von \gls{ROS} gestartet werden, bei ihm anmelden. Ein
+gestartetes tool wird innerhalb von \gls{ROS} als \textit{node} bezeichnet. 
+Ist der \textit{master} nicht gestartet können auch keine \textit{nodes}
+gestartet werden. Die \textit{nodes} sind also alle zunächst auf Kommunikation mit dem \textit{master}
+angewiesen. Diese Kommunikation kann lokal oder nichtlokal ausgeführt werden,
+d.h. der \textit{master} kann sich auch auf einem anderen Rechner wie der
+\textit{node} befinden solange eine http Verbindung zwischen beiden hergestellt
+werden kann. Denn das Anmelden des \textit{nodes} beim master erfolgt über einen
+\gls{XML-RPC}, getragen vom http. Für den tool Entwickler auf Anwendungsebene ist diese
+Kommunikation zur Anmeldung allerding völlig unsichtbar und er muss sich nicht darum kümmern.
+Das Ausführen von \textit{nodes} auf unterschiedlichen Rechnern ist natürlich ebenso
+möglich und wie zuvor bereits erwähnt eines der Kernfunktionen von \gls{ROS}.
+Dies lässt sich vorteilhaft ausnutzen durch zum Beispiel:
+\begin{itemize}
+  \item Verteilung oder Auslagerung rechenintensiver \textit{nodes} auf potente Hardware
+  \item Zusammenführenung von an unterschiedlichen Stellen gewonnener Daten.
+\end{itemize}
+
+So muss beispielsweise ein mobiler Roboter Bilderkennungs Aufgaben nicht selbst
+ausführen, sondern kann diese an einen \textit{node} weiterleiten der auf einem
+Rechencluster ausgeführt wird. Die zweite genannte Möglichkeit ist auch besonders im Bezug auf
+diese Arbeit wichtig, da Pfaddaten des Roboters und der zu testenden
+Sensorknoten für \textit{Pathcompare} verfügbar gemacht werden müssen.
+Die Kommunikation zwischen Nodes erfolgt über sogenannte
+\textit{messages}, diese enthalten die serialisierte Form der zu übertragenden Daten.
+\gls{ROS} bietet in seinen Kernpakten bereits zahlreiche Definitionen für
+unterschiedliche \textit{message} Typen, aber es ist auch
+möglich eigene zu generieren und dies wird von
+zahlreichen Paketen getan um Daten maßgeschneidert übertragen zu können. Einmal definierte \textit{message} Typen können
+wiederum rekusiv in anderen \textit{message} Typen verwendet werden.
+Ein Beispiel für eine message ist in \autoref{lst:transform} dargestellt; eine Transformation die in ROS geometry\_msgs
+definiert ist. Sie besteht wie erkennbar aus den zwei Typen \textit{Vector3}
+und \textit{Quaternion}. Letzterer beschreibt die Rotation und der erste die
+Translation. Zusammengefügt ergibt dies eine Transformationsnachricht.
+
+\begin{lstlisting}[caption=ROS transformation message, label=lst:transform]
+geometry_msgs/Vector3 translation
+  float64 x
+  float64 y
+  float64 z
+geometry_msgs/Quaternion rotation
+  float64 x
+  float64 y
+  float64 z
+  float64 w
+\end{lstlisting}
+
+Soll ein \textit{node} seine \textit{messages} anderen \textit{nodes} 
+senden können, so muss dies zunächst durch festlegen einer sogenannten \textit{topic} beim
+\textit{master} angemeldet werden. Dann wird diese \textit{topic} für andere
+\textit{nodes} im \gls{ROS} über den \textit{master} sichtbar.
+Eine \textit{topic} besteht im wesentlichen aus zwei Teilen, einer
+\textit{topic-id} und einem \textit{message-type}. Wobei der
+\textit{message-type} angibt welcher Typ von \textit{messages} über diese
+\textit{topic} verschickt wird. Die \textit{topic-id} dient zur eindeutigen
+Identifikation innerhalb des \gls{ROS}. \textit{Nodes} welche \textit{messages}
+einer \textit{topic} empfangen sollen, müssen diese \textit{topic} dann beim
+\textit{master} abbonieren. In programmatischer Hinsicht wird beim Empfang
+neuer Nachrichten innerhalb des \textit{nodes} eine festgelegte callback
+Methode aufgerufen um die \textit{messages} zu bearbeiten. Treffen dabei
+Nachrichten mit einer höheren Frequenz ein, als
+abgearbeitet werden können, so kommt es irgendwann zu Verlusten wenn die
+einstellbare Größe der \textit{message queue} überschritten wird.
+
+Zwei weitere wichtige Begriffe in \gls{ROS} betreffen die Organisierung der
+Dateien die zu den einzelnen tools gehören. Dies sind:
+
+\begin{itemize}
+  \item package
+  \item stack
+\end{itemize}
+
+Ein \textit{package} beinhaltet den Code, Libraries sowie die ausführbare Datei eines
+tools bzw. \textit{nodes}.
+In \gls{ROS} sind für packages bestimmte Ordnerstrukturen und Dateien
+festgelegt sodass mithilfe der von \gls{ROS} mitgebrachten tools \textit{packages}
+leicht gebaut, gesucht und gestartet werden können. Beispielsweise basiert das \gls{ROS}
+\gls{ROS} build System auf cmake und so ist eine vorkonfigurierte
+\textit{CMakeLists.txt} in jedem \textit{package} grundsätzlich enthalten. Eine Zusammenfassung mehrerer
+\textit{packages} wird als stack bezeichnet. 
+
+\textit{Pathcompare} ist also im Bezug auf \gls{ROS}, während der Ausführung, ein
+einzelner \textit{node} welcher \textit{topics} abboniert. Es wird in einem
+späteren Teil darauf eingegangen welche \textit{messages} das genau sind.
+Die Dateien sind dabei in zwei \textit{packages} namens \textit{pathcompare}
+und \textit{pathcompareplugins} aufgeteilt.
+
+%TODO figure einfügen referenzsystem im ros
+
 \begin{itemize}
   \item Warum brauchen wir ROS?
   \item Wer entwickelt ROS? (Stanford University \& WillowGarage \& community)
