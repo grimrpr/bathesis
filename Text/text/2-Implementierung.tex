@@ -208,23 +208,24 @@ müssen dann zuerst, mit dem von Qt bereitgestelltem \gls{MOC} übersetzt werden
 Standardmäßig wird in \textit{Qt} das Build Programm qmake verwendet, welches
 die nötigen Aufrufe des \gls{MOC} automatisch veranlasst. In Hinblick auf
 \textit{Pathcompare} war aber eine Integration in das von \gls{ROS}
-unterstützte Build verfahren cmake notwendig. Hierbei muss beachtet werden,
+genutzte Build verfahren cmake notwendig. Hierbei muss beachtet werden,
 dass cmake die Dateien welche einen \gls{MOC} Aufruf notwendig machen, in der
 derzeitigen Version, nicht selbständig erkennt. Diese müssen manuell in der
 \textit{CmakeLists.txt} deklariert werden. Die sonstige Einbindung
 \textit{Qt} spezifischer Libraries und deren Verlinkung mit der Applikation ist
 in cmake leicht möglich. Somit war die Verwenung von Qt in
 \textit{pathcompare} kein Hindernis für die Verwendung von cmake.
-Die Nutzung von cmake wird darüberhinaus, für große Projekte, von Autoren im
-Rahmen der Qt Dokumentation selbst empfohlen.
+Die Nutzung von cmake wird darüberhinaus, für große Projekte, von der 
+Qt Dokumentation selbst empfohlen.
 %TODO Quelle anbringen?
 
 Neben dem \gls{MOC} existiert noch ein sogenannter \gls{UIC}. Dieser tritt im
 Zusammenhang mit dem \textit{QtDesigner} in Erscheinung. Der
 \textit{QtDesigner} ermöglicht es graphisch Qt GUIs zu erstellen. Dabei wird
-eine XML datei vom Designer erstellt, welche den Aufbau der GUI abbildet.
+eine XML Datei vom Designer erstellt, welche den Aufbau der GUI abbildet.
 Der UIC ist dann dafür verantwortlich diese Datei in C++ Klassen zu übersetzen.
-Auch hier muss cmake veranlasst werden zunächst den gls{UIC} aufzurufen.
+Auch hier muss cmake veranlasst werden zunächst für einen gls{UIC}
+entsprechender Dateien zu sorgen.
 
 \begin{itemize}
   \item Warum braucht Pathcompare Qt?
@@ -245,7 +246,69 @@ Der Hauptfokus beim Design der GUI lag darauf, einfache Benutzung und
 Außerdem sollte die Software leicht erweiterbar sein.
 
 \subsection{Überblick Gesamtsystem}
-%screenshots: TopicView  sowie Gesamtansicht mit
+
+Im Folgendem wird die Software in einer Gesamtansicht dargestellt und
+anschließend auf die Funktionsweise ihrer Einzelkomponenten genauer eingegangen.
+
+Wie in vorherigen Teilen bereits erwähnt ist \textit{Pathcompare} durch
+Plug-ins erweiterbar. Dadurch kann man zunächst das Gesamtsystem logisch in zwei Teile
+untergliedern, nämlich in 
+
+\begin{enumerate}
+  \item Rahmen
+  \item Plug-ins
+\end{enumerate}
+
+Diese Aufteilung spiegelt sich am offensichtlichsten auch in der GUI wider.
+Hierbei bildet das UI des Rahmens die Grundlage für die Visualisierung von Plug-ins.
+Dabei wird den Plug-ins, nachdem sie geladen wurden, ein Platz innerhalb des
+Rahmens zugewiesen. Innerhalb dieses zugewiesenen Platzes können sie beliebige
+eigene UI Elemente laden und haben die volle Kontrolle über diese. Konkret
+gehören dabei Folgende UI Elemente zum Rahmen:
+
+\begin{itemize}
+\item Hauptfenster
+\item Topic Übersicht
+\item Plug-in Tab-Fenster
+\end{itemize}
+
+Das Hauptfenster dient dabei als Grundlage für die Topic Übersicht und das
+Plug-in Tab-Fenster. Die Topic Übersicht und das Plug-in Tab-Fenster sind vertikal
+getrennt. Die Topic-Ansicht ist dabei ganz links angeordnet, siehe   .
+%TODO screenshot Gesamtansicht .
+Rechts neben der Topic Übersicht schließt unmittelbar das Plug-in
+Tab-Fenster an.
+Wird ein Plug-in geladen, wird in diesem Tab-Fenster ein neuer Tab angelegt. Die
+Fläche dieses Tabs wird diesem Plug-in dann zur Verfügung gestellt um sein UI
+darauf aufzubauen. Auf Details bezüglich des Ladens der Plug-ins und deren
+Funktionsweise wird in einem folgendem Abschnitt eingegangen. 
+
+Die Topic Übersicht zeigt die momentan im \gls{ROS} verfügbaren Topics an. 
+Um die Übersicht auf die Topics zu strukturieren ist sie derart
+gestaltet, dass Topics desselben \textit{message} Typs gruppiert werden. Diese
+Gruppen werden dann kompakt im Topic Übersicht Fenster angezeigt und können dort durch
+den Nutzer aufgeklappt werden um alle \textit{topics} eines Typs anzuzeigen.
+Dies ermöglicht es, nur solche Topics zu beobachten, die auch
+tatsächlich relevant sind für den Nutzer. 
+
+Die Platzaufteilung zwischen der Topic Übersicht und des Plug-in Tab-Fensters,
+innerhalb des Hauptfensters, wurde zugunsten des Plug-in Tab-Fensters gewählt
+sodass dieses mehr Platz einnimmt.  Dies hat auch zur Folge, dass beim Vergrößern
+des Hauptfensters, die Fläche des Plus-in Tab-Fensters vertikal und horizontal
+vergrößert wird. Die eingenommene Fläche der Topic Übersicht wächst allerdings
+nur vertikal wesentlich an. Diese Designentscheidung begründet sich darin,
+dass die Plug-ins den wesentlichen Inhalt für den Nutzer präsentieren. Die
+Topic Übersicht wird hingegen vermutlich nur kurzzeitig betrachtet werden und
+liegt nicht im Zentrum des Interesses. Darüber hinaus ist die Topic Übersicht
+sehr kompakt gestaltet und der horizontale Platzbedarf fällt gering aus.
+
+-ROSManager bezug TopicView
+
+
+%TODO Referenz zu Plug-in Abschnitt
+
+
+%TODO screenshot des Rahmens mit topics einfügen
 \begin{itemize}
   \item Rahmen mit Topic TreeView
   \item Anbindung an ROS durch ROSManager
@@ -254,12 +317,15 @@ Außerdem sollte die Software leicht erweiterbar sein.
 \end{itemize}
 
 \subsection{Plug-in Main Compare}
+\label{sub:maincompare}
+
 %screenshot des Plugins
 \begin{itemize}
+  \item path message
   \item Funktionen erklären
   \item Referenz Pfad Selektion
-  \item Export (+Format der csv Datei)
   \item Tabellenansicht erklären
+  \item Export (+Format der csv Datei)
 \end{itemize}
 
 \subsubsection{Pfadvergleichsverfahren}
