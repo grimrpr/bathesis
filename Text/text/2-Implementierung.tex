@@ -303,7 +303,8 @@ Topic Übersicht wird hingegen vermutlich nur kurzzeitig betrachtet werden und
 liegt nicht im Zentrum des Interesses. Darüber hinaus ist die Topic Übersicht
 sehr kompakt gestaltet und der horizontale Platzbedarf fällt gering aus.
 
--ROSManager bezug TopicView
+%TODO screenshot des Rahmens mit topics einfügen
+
 
 \subsection{Anbindung an ROS}
 
@@ -353,36 +354,55 @@ Weitere Methoden die der ROSMaster den Plug-ins zur Verfügung stellt, werden in
 späteren Abschnitt aufgezeigt.
 
 Die Klasse \textit{ROSManager} sorgt außerdem dafür, dass die Topic Übersicht
-regelmäßig aufgefrischt wird. Es wird also dem Nutzer ersichtlich sollten neue
-\textit{topics} erscheinen oder nicht mehr verfügbar sind.
+regelmäßig aufgefrischt wird. Es wird also dem Nutzer ersichtlich, sollten neue
+\textit{topics} erscheinen oder wenn diese nicht mehr verfügbar sind.
 Da die \gls{ROS} \gls{API} keinen event service anbietet um Beobachter zu benachrichtigen,
-falls sich der Status von \textit{topics} ändert, stellt der \textit{ROSManager}
-sekündlich eine Anfrage an den \textit{master} nach dem aktuellen Stand. 
-Dies ist gesteuert über einen QTimer in Verbindung mit dem Signal-Slot Konzept.
+falls sich der Status von \textit{topics} ändert, stellt der
+\textit{ROSManager} sekündlich eine Anfrage an den \textit{master} nach dem
+aktuellen Stand der topics.  Dies ist gesteuert über einen QTimer in Verbindung
+mit dem Signal-Slot Konzept.
 
 
 \subsection{Laden von Plugins}
-
-Das einbinden von Plugins in den Rahmen steuert die Klasse
+Das Einbinden von Plugins in den Rahmen steuert die Klasse
 \textit{PluginLoader}. Sie sucht dabei in einem Verzeichnis nach als Plug-in
-infrage kommenden Dateien. Bei dieser Suche werden generell nur Library
-Dateien betrachtet.
+infrage kommenden Dateien. Bei dieser Suche werden generell nur shared Library
+Dateien betrachtet. Handelt es sich um eine für \textit{Pathcompare} gültige
+Plug-in Datei, fragt der \textit{PluginLoader} zunächst den Namen des Plug-ins
+über eine im Plug-in Interface spezifizierte Methode \textit{getName()} ab.
+Anschließend wird im Plug-in Tab Fenster ein neuer Tab angelegt. Dabei wird im
+Tab Reiter der erfragte Name des Plug-ins eingetragen. Dadurch sind in der GUI die Plug-ins für den
+Nutzer leicht zu unterscheiden und können schnell angewählt werden.
+Der Plug-in Ordner steht während der Laufzeit von \textit{Pathcompare}
+unter der Beobachtung des \textit{PluginLoaders}. 
+Obwohl \textit{Pathcompare} bereits gestartet wurde, können also Plug-ins in das Plug-in
+Verzeichnis eingefügt werden und diese werden geladen. Dies bietet mehr Flexibilität für den
+Nutzer und Entwickler, da kein Neustart der Rahmen Anwendung sowie der ausgeführten
+\textit{Plug-ins} erforderlich ist.
 
-\begin{itemize}
-  \item Anbindung an ROS --> ROSManager
-  \item PluginLoader
-\end{itemize}
 
-%TODO screenshot des Rahmens mit topics einfügen
-\begin{itemize}
-  \item Rahmen mit Topic TreeView
-  \item Anbindung an ROS durch ROSManager
-  \item TabFlächen für einzelne PlugIns
-  \item PluginLoader lädt Plugins
-\end{itemize}
-
-\subsection{Plug-in Main Compare}
+\subsection{Main Compare Plug-in}
 \label{sub:maincompare}
+
+
+\textit{Main Compare} implementiert die eigentliche Hauptfunktionalität um Pfaddaten des
+Referenzsystems und der Sensorknoten zu vergleichen und auszuwerten. 
+Es ist dabei der Philosophie von \textit{Pathcompare} folgend auch als Plug-in
+implementiert worden, welches beim Starten des Rahmens durch den
+\textit{PluginLoader} geladen und ausgeführt wird.
+
+
+\textit{Main Compare} implementiert dabei folgende features:
+
+\begin{itemize}
+  \item Abstandsbestimmung zu Referenzpfad
+  \item Berechnung der Pfadlänge
+  \item Item
+  \item Export der Abstandsdaten
+\end{itemize}
+
+Als Grundlage für alle aufgeführten features dienen die über des ROS
+bereitgestellten Pfad \textit{topics}.
 
 %screenshot des Plugins
 \begin{itemize}
