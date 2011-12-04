@@ -224,7 +224,7 @@ Zusammenhang mit dem \textit{QtDesigner} in Erscheinung. Der
 \textit{QtDesigner} ermöglicht es graphisch Qt GUIs zu erstellen. Dabei wird
 eine XML Datei vom Designer erstellt, welche den Aufbau der GUI abbildet.
 Der UIC ist dann dafür verantwortlich diese Datei in C++ Klassen zu übersetzen.
-Auch hier muss cmake veranlasst werden zunächst für einen gls{UIC}
+Auch hier muss cmake veranlasst werden zunächst für einen \gls{UIC} Aufruf
 entsprechender Dateien zu sorgen.
 
 \begin{itemize}
@@ -242,7 +242,7 @@ entsprechender Dateien zu sorgen.
 
 \section{Design der Software}
 Der Hauptfokus beim Design der GUI lag darauf, einfache Benutzung und
-übersichtliche Testdatendarstellung, für den Nutzer zu gewährleisten.
+übersichtliche Darstellung, für den Nutzer zu gewährleisten.
 Außerdem sollte die Software leicht erweiterbar sein.
 
 \subsection{Überblick Gesamtsystem}
@@ -282,6 +282,7 @@ Wird ein Plug-in geladen, wird in diesem Tab-Fenster ein neuer Tab angelegt. Die
 Fläche dieses Tabs wird diesem Plug-in dann zur Verfügung gestellt um sein UI
 darauf aufzubauen. Auf Details bezüglich des Ladens der Plug-ins und deren
 Funktionsweise wird in einem folgendem Abschnitt eingegangen. 
+%TODO Referenz zu Plug-in Abschnitt
 
 Die Topic Übersicht zeigt die momentan im \gls{ROS} verfügbaren Topics an. 
 Um die Übersicht auf die Topics zu strukturieren ist sie derart
@@ -292,7 +293,7 @@ Dies ermöglicht es, nur solche Topics zu beobachten, die auch
 tatsächlich relevant sind für den Nutzer. 
 
 Die Platzaufteilung zwischen der Topic Übersicht und des Plug-in Tab-Fensters,
-innerhalb des Hauptfensters, wurde zugunsten des Plug-in Tab-Fensters gewählt
+innerhalb des Hauptfensters, wurde zugunsten des Plug-in Tab-Fensters gewählt,
 sodass dieses mehr Platz einnimmt.  Dies hat auch zur Folge, dass beim Vergrößern
 des Hauptfensters, die Fläche des Plus-in Tab-Fensters vertikal und horizontal
 vergrößert wird. Die eingenommene Fläche der Topic Übersicht wächst allerdings
@@ -304,9 +305,73 @@ sehr kompakt gestaltet und der horizontale Platzbedarf fällt gering aus.
 
 -ROSManager bezug TopicView
 
+\subsection{Anbindung an ROS}
 
-%TODO Referenz zu Plug-in Abschnitt
+Die Hauptaufgabe des Rahmens ist es eine Anbindung an ROS zu gewährleisten.
+Diese Anbindung muss es den Plug-ins ermöglichen, benötigte \textit{topics} zu
+abbonieren. Für diese Anbindung ist in \textit{Pathcompare} die Klasse
+\textit{ROSManager} verantwortlich. Im Konstruktor dieser Klasse wird durch
+entsprechende \gls{ROS} API Aufrufe der \textit{node} \textit{pathcompare}
+erstellt. Dies geschieht durch starten eines separaten Threads, da der ROS Code
+in einer eigenen while-Schleife ausgeführt werden muss, die über die gesamte
+Lebenszeit des \textit{nodes} bearbeitet wird. Innerhalb dieser Schleife wird
+beispielsweise, das eintreffen neuer \textit{messages} von abonnierten
+\textit{topics} abgearbeitet.
+Zugriff der Plug-ins auf ROS spezifische Funktionalität wird komplett über den
+\textit{ROSManager} gekapselt. Diese Zentralisierung ist deshalb nötig, umd den Zugriff
+der verschiedenen Plug-ins, auf ROS, zu koordinieren. 
+Die wichtigste Methode die durch den ROSManager dabei den Plug-ins zur
+Verfügung steht, ermöglicht es eine als Parameter übergebene \textit{topic} zu
+abbonieren. 
+Diese Methode ist wie folgt definiert:
+%TODO add figure message / topic handling gesamtübersicht
+%TODO add method definition of ROSManager subscribeToTopic(..)
 
+Beim Abonnieren einer \textit{topic} wird in ROS typischerweise direkt eine
+Methode als Callback angegeben, welche eingehende \textit{messages} bearbeitet.
+Bei einer einfachen Abbonierung ist es dabei zunächst nicht möglich mehrere
+Callbacks zu registrieren.
+In \textit{Pathcompare} bestehtehen in dieser Hinsicht allerdings zwei
+Schwierigkeitn denen bei der Entwicklung begnet werden musste:
+
+\begin{enumerate}
+  \item eventuell abbonieren mehrere Plug-ins eine topic
+  \item topics können von beliebigem \textit{message} Typ sein
+\end{enumerate}
+
+Gelöst wurde das Problem durch die Verwendung von
+\textit{ros::message\_filter::cache}. Objekten dieser Klasse wird bei der
+Initialisierung eine \textit{topic} zugewiesen. Empfangene \textit{messages}
+dieser \textit{topic} werden in einem Ringpuffer mit einstellbarer größe Zwischengespeichert.
+Außerdem erlaubt diese Klasse die Registrierung beliebig vieler Callbacks.
+Der \textit{ROSManager} sorgt also dafür, dass für jede von den Plug-ins
+benötigte \textit{topic} genau ein \textit{ros::message\_filter::cache} Objekt
+existiert. Plug-ins erhalten dann einen Verweis auf dieses Objekt und können
+ihren Callback registrieren.
+
+Weitere Methoden die der ROSMaster den Plug-ins zur Verfügung stellt, werden in einem
+späteren Abschnitt aufgezeigt.
+
+Die Klasse \textit{ROSManager} sorgt außerdem dafür, dass die Topic Übersicht
+regelmäßig aufgefrischt wird. Es wird also dem Nutzer ersichtlich sollten neue
+\textit{topics} erscheinen oder nicht mehr verfügbar sind.
+Da die \gls{ROS} \gls{API} keinen event service anbietet um Beobachter zu benachrichtigen,
+falls sich der Status von \textit{topics} ändert, stellt der \textit{ROSManager}
+sekündlich eine Anfrage an den \textit{master} nach dem aktuellen Stand. 
+Dies ist gesteuert über einen QTimer in Verbindung mit dem Signal-Slot Konzept.
+
+
+\subsection{Laden von Plugins}
+
+Das einbinden von Plugins in den Rahmen steuert die Klasse
+\textit{PluginLoader}. Sie sucht dabei in einem Verzeichnis nach als Plug-in
+infrage kommenden Dateien. Bei dieser Suche werden generell nur Library
+Dateien betrachtet.
+
+\begin{itemize}
+  \item Anbindung an ROS --> ROSManager
+  \item PluginLoader
+\end{itemize}
 
 %TODO screenshot des Rahmens mit topics einfügen
 \begin{itemize}
