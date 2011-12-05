@@ -391,35 +391,106 @@ Es ist dabei der Philosophie von \textit{Pathcompare} folgend auch als Plug-in
 implementiert worden, welches beim Starten des Rahmens durch den
 \textit{PluginLoader} geladen und ausgeführt wird.
 
+In der GUI werden dem Nutzer verschiedene Informationen sowie
+Einstellungsmöglichkeiten bezüglich der
+empfangenen Pfaddaten angezeigt. Die Funktionen der einzelnen GUI Elemente
+werden im Folgenden aufgezeigt.
+Insgesamt gibt es drei Bereiche in der GUI, welche sich anhand dreier
+verschiedener Labels abgrenzen lassen. Von oben nach untern gesehen sind
+dies die Bereiche:
 
-\textit{Main Compare} implementiert dabei folgende features:
+\begin{enumerate}
+  \item Reference path selection
+  \item Export results
+  \item Results
+\end{enumerate}
 
-\begin{itemize}
-  \item Abstandsbestimmung zu Referenzpfad
-  \item Berechnung der Pfadlänge
-  \item Item
-  \item Export der Abstandsdaten
-\end{itemize}
-
-Als Grundlage für alle aufgeführten features dienen die über des ROS
-bereitgestellten Pfad \textit{topics}.
-
+%TODO verweis auf screenshot des Plugins einfügen
 %screenshot des Plugins
+
+Der Bereich der ``Reference path selection'' beinhaltet eine Combo-Box, welche
+alle über ROS verfügbaren \textit{topics} des Typs nav\_msgs/Path beinhaltet.
+Der Nutzer kann dann aus dieser Liste einen Pfad auswählen, der als
+Referenzpfad genutzt werden soll. Das bedeutet, dass der ausgewählte Pfad als
+Referenz für die übrigen Pfade gilt. So werden dann die Abstandsberechnungen
+bezüglich dieses Pfades durchgeführt. Die Auswahl des Referenzpfades kann
+jederzeit geändert werden, und die Abstände werden stets neu berechnet.
+
+Unterhalb des ``reference path selection'' Bereichs befindet sich der ``Export
+results'' Bereich. Er dient dem Nutzer dazu, die berechneten und
+im ``Results'' Bereich visualisierten Ergebnisse, permanent zu speichern.
+Die Speicherung erfolgt dabei als \gls{CSV} Datei. Der Export wird durchgeführt
+wenn der Nutzer den in diesem Bereich vorhandenen Button drückt. 
+Das genaue Format der gespeicherten Daten wird später erläutert.
+%TODO verweis auf den Abschnitt ``format CSV Datei'' anbringen 
+
+Der ``Result'' Bereich dient dazu alle ermittelten Informationen bezüglich der
+Pfade, für den Nutzer anzuzeigen. Die Visualisierung erfolgt hierbei durch eine
+Tabbellenstruktur. In dieser Tabelle ist für jede Pfad topic ein Spalte
+angelegt.
+In jeder Zeile einer Spalte sind dabei die unterschiedlichen
+Informationen eingetragen.
+Main Compare verhält sich außerdem so, dass topics, welche einmal in
+der Tabelle erfasst wurden auch dort verbleiben. Sollte also eine topic nicht
+mehr im ROS zur verfügung stehen, bleiben die angezeigten Informationen auf
+Basis der zuletzt empfangenen Werte dennoch erhalten. 
+
+In der Tabelle werden für den Nutzer folgende Informationen:
+angezeigt:
+
 \begin{itemize}
-  \item path message
-  \item Funktionen erklären
-  \item Referenz Pfad Selektion
-  \item Tabellenansicht erklären
-  \item Export (+Format der csv Datei)
+  \item Anzahl der Lokalisierungspunkte
+  \item Berechnung der Pfadlänge
+  \item Anzeige des Medians der Abstände
+  \item Anzeige des arithmetischen Mittels der Abstände
+  \item Berechnung der empirische Varianz $s^2$ der Abstände
+  \item Berechnung der empirische Standardabweichung $s$ der Abstände
+  \item 20 größten Abstände zu Referenzpfad
 \end{itemize}
+
+Die angezeigten Informationen werden bei Empfang neuer Pfad \textit{messages} stets
+aktualisiert.
+Um nachzuvollziehen wie die aufgeführten Informationen ermittelt werden, bietet
+es sich an, zunächst den Typ der \textit{messages}, welche über die Pfad topics
+empfangen werden, zu analysieren. Denn auf dieser Basis leiten sich alle
+ermittelten Informationen ab. Wie bereits beschrieben sind die messages vom Typ
+\textit{nav\_msgs/Path}, der wie folgt definiert ist:
+
+\begin{lstlisting}[caption=ROS transformation message, label=lst:transform]
+Header header
+  uint32 seq
+  time stamp
+  string frame_id
+geometry_msgs/PoseStamped[] poses
+  Header header
+    uint32 seq
+    time stamp
+    string frame_id
+  geometry_msgs/Pose pose
+    geometry_msgs/Point position
+      float64 x
+      float64 y
+      float64 z
+    geometry_msgs/Quaternion orientation
+      float64 x
+      float64 y
+      float64 z
+      float64 w
+\end{lstlisting}
+
+Zunächst ist zu erkennen dass dieser \textit{message} Typ aus anderen Typen
+zusammengesetzt ist. Auf der obersten Ebene ist dies ein
+\textit{Header} und ein Array von \textit{geometry\_msgs/PoseStamped} messages.
 
 \subsubsection{Pfadvergleichsverfahren}
+Als Grundlage für alle aufgeführten Features dienen die über des ROS
+bereitgestellten Pfad \textit{messages}.
+%bild nav_msgs/Path message
 
 %bild test mit Tickgeber
 
 %bild variante ohne tick
 
-%bild nav_msgs/Path message
 \subsection{Plug-in Konzept allgemein}
 \begin{itemize}
   \item allgemein Qt Plugins
