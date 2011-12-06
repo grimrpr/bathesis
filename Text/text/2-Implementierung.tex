@@ -541,7 +541,7 @@ Punkt zusammen. In Anlehnung an die verwendeten Bezeichner in
 
 Die konkrete Repräsentierung dieses Modells erfolgt in Main Compare durch die
 Klassen \textit{TopicPath} und \textit{Position}. TopicPath repräsentiert dabei
-$M$. Position repräsentiert ein einzelnes Tupel und enthält somit den
+die Menge $M$. Position repräsentiert ein einzelnes Tupel und enthält somit den
 Zeitstempel und zugehörigen Punkt. Dem Modell entsprechend enthält ein
 TopicPath Objekt eine Liste von Position Objekten.  Neben den Klassen TopicPath
 und Position gibt es noch eine Klasse \textit{TopicPathManager}. Es wird genau
@@ -587,21 +587,26 @@ mit
 $t_1,t_2 \in M$
 gilt, dass:
 \[
-z_2 > z_1 \wedge \nexists (z^{'}, p^{'}) \in M : z_2 > z^{'} > z_1
+z_2 > z_1 \wedge \nexists (z^{,}, p^{,}) \in M : z_2 > z^{,} > z_1
 \]
 
 Der Abstand zweier aufeinanderfolgender Punkte lässt sich einfach durch
-Vektorsubtraktion und anschließende Betragsbildung bestimmen.
-%Siehe dazu TopicPathManager::
+Vektorsubtraktion und anschließende Betragsbildung des resultierenden Vektors
+bestimmen.
+%TODO Siehe dazu TopicPathManager::
 
 \subsubsection{Pfadvergleichsverfahren und Abstandsberechnung}
-Als Grundlage für alle aufgeführten Features dienen die über des ROS
-bereitgestellten Pfad \textit{messages}.
-%bild nav_msgs/Path message
+Das Hauptziele von Main Compare ist es, dem Nutzer zu erleichtern, die
+Genauigkeit eines durch Lokalisierung gewonnenen Pfades, in Bezug auf einen
+Referenzpfad, abzuschätzen. Um dies zu tun, ist es notwendig, den Abstand von
+Lokalisierungen des zu untersuchenden Pfads, zu denen des Referenzpfads, zu
+ermitteln. In einem naiven Ansatz könnte man die Lokalisierungen direkt
+miteinander vergleichen, d.h. für jeden Punkt des Referenzpfades existiert auch
+ein Punkt im zu vergleichenden Pfad mit demselben timestamp. Dies wäre in einem
+Ansatz wie in  gezeigt möglich.
+%TODO bild test mit Tickgeber
 
-%bild test mit Tickgeber
-
-%bild variante ohne tick
+%TODO bild variante ohne tick
 
 \subsubsection{Bestimmung empirischer Varianz}
 
