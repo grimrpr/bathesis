@@ -439,7 +439,7 @@ In der Tabelle werden für den Nutzer folgende Informationen:
 angezeigt:
 
 \begin{itemize}
-  \item Anzahl der Lokalisierungspunkte
+  \item Anzahl der Lokalisierungen
   \item Berechnung der Pfadlänge
   \item Anzeige des Medians der Abstände
   \item Anzeige des arithmetischen Mittels der Abstände
@@ -531,24 +531,70 @@ Main Compare doch noch betrachtet wird und somit die durchzuführenden
 
 Anhand der oben aufgezählten, genutzen Felder, lässt sich ein Pfad abstrakt durch eine Menge
 $M$ von Tupeln modellieren. Dabei setzen sich die Tupel aus einem Zeitstempel und einem dreidimensionalem
-Punkt zusammen. $M$ sei demnach wie folgt definiert:
+Punkt zusammen. In Anlehnung an die verwendeten Bezeichner in
+\autoref{lst:pathmsgs}, sei $M$ demnach wie folgt definiert:
 
 \begin{equation*}
   \label{eqn:setdef}
-  M = \{ (p.stamp , p.position) \mid p \in poses \}
+  M := \{ (p.stamp , p.position) \mid p \in poses \}
 \end{equation*}
 
-Die konkrete Repräsentierung des Modells erfolgt in Main Compare durch die
+Die konkrete Repräsentierung dieses Modells erfolgt in Main Compare durch die
 Klassen \textit{TopicPath} und \textit{Position}. TopicPath repräsentiert dabei
-$M$. Position repräsentiert ein einzelnes Tupel. Dem Modell entsprechend enthält ein TopicPath
-Objekt eine Liste von Position Objekten.
+$M$. Position repräsentiert ein einzelnes Tupel und enthält somit den
+Zeitstempel und zugehörigen Punkt. Dem Modell entsprechend enthält ein
+TopicPath Objekt eine Liste von Position Objekten.  Neben den Klassen TopicPath
+und Position gibt es noch eine Klasse \textit{TopicPathManager}. Es wird genau
+ein Objekt dieser Klasse für jede im ROS verfügbare Path topic angelegt. Diese
+Klasse bietet eine callback Methode, welche beim, zur topic gehörenden,
+message\_filter::cache registriert wird. Kommt eine neue message an, wird die
+callback Methode aufgerufen und aus den Werten der Path message ein neues
+TopicPath Objekt erstellt. Anschließend werden, anhand des neuen TopicPaths,
+alle nötigen Berechnungen erneut durchgeführt und die Results Tabelle
+aktualisiert.
 
-Anhand der abstrakten Modellierung eines Pfades, werden im Folgenden, die von
-Main Compare ausgeführten, Berechnungen erläutert. 
+%TODO Klassendiagramm bezüglich der Klassen Position, TopicPath, TopicPathManager
 
-- Klassen vorstellen, beschreiben, welche M in Main Compare repräsentieren
+Anhand der abstrakten Modellierung $M$ eines Pfades, werden im Folgenden, die von
+Main Compare ausgeführten Berechnungen erläutert. In der konkreten
+Repräsentatio erfolgen alle Berechnungen in der Klasse \textit{TopicPathManager}. 
 
-\subsubsection{Pfadvergleichsverfahren}
+\subsubsection{Anzahl der Lokalisierungen}
+Um die Anzahl der Lokalisierungen zu ermitteln wird in Main Compare lediglich die
+Mächtigkeit der Menge $M$ bestimmt. Es gilt also:
+
+\begin{equation*}
+  \label{eqn:numofpoints}
+  number of points = \vert M \vert
+\end{equation*}
+
+Im \textit{TopicPathManager} ist dies entsprechend einfach realisiert.
+%Siehe dazu TopicPathManager::
+
+\subsubsection{Berechnung der Pfadlänge}
+Bei der Bestimmung der Pfadlänge werden zunächst alle Abstände, zwischen je
+zwei direkt aufeinanderfolgenden Punkten im Pfad, bestimmt. Die Summe all dieser
+Abstände entspricht dann der Gesamtlänge des Pfades. Dazu muss jedoch noch
+geklärt werden, wann ein Punkt $p_1$ in einer Path message auf einen anderen
+Punkt $p_2$ folgt. Das lässt sich über den Zeitstempel feststellen und ist
+anschaulich ausgedrückt dann der Fall, wenn keine weitere Lokalisierung in
+der Zeit zwischen der Lokalisierung $p_1$ und $p_2$ stattgefunden hat. Dies kann man auch wie
+folgend, abstrakt und bezogen auf $M$, ausdrücken.  Ein Punkt $p_2$ ist direkt
+folgend auf einen Punkt $p_1$, genau dann wenn für die zugehörigen Tupel
+
+$t_1 := (z_1, p_1)$ und $t_2 := (z_2, p_2)$
+mit
+$t_1,t_2 \in M$
+gilt, dass:
+\[
+z_2 > z_1 \wedge \nexists (z^{'}, p^{'}) \in M : z_2 > z^{'} > z_1
+\]
+
+Der Abstand zweier aufeinanderfolgender Punkte lässt sich einfach durch
+Vektorsubtraktion und anschließende Betragsbildung bestimmen.
+%Siehe dazu TopicPathManager::
+
+\subsubsection{Pfadvergleichsverfahren und Abstandsberechnung}
 Als Grundlage für alle aufgeführten Features dienen die über des ROS
 bereitgestellten Pfad \textit{messages}.
 %bild nav_msgs/Path message
@@ -556,6 +602,10 @@ bereitgestellten Pfad \textit{messages}.
 %bild test mit Tickgeber
 
 %bild variante ohne tick
+
+\subsubsection{Bestimmung empirischer Varianz}
+
+\subsubsection{Bestimmung des Median der Abstände}
 
 \subsection{Plug-in Konzept allgemein}
 \begin{itemize}
