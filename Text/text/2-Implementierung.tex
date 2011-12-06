@@ -426,7 +426,7 @@ Das genaue Format der gespeicherten Daten wird später erläutert.
 
 Der ``Result'' Bereich dient dazu alle ermittelten Informationen bezüglich der
 Pfade, für den Nutzer anzuzeigen. Die Visualisierung erfolgt hierbei durch eine
-Tabbellenstruktur. In dieser Tabelle ist für jede Pfad topic ein Spalte
+Tabbellenstruktur. In dieser Tabelle wird für jede Path topic ein Spalte
 angelegt.
 In jeder Zeile einer Spalte sind dabei die unterschiedlichen
 Informationen eingetragen.
@@ -449,14 +449,19 @@ angezeigt:
 \end{itemize}
 
 Die angezeigten Informationen werden bei Empfang neuer Pfad \textit{messages} stets
-aktualisiert.
-Um nachzuvollziehen wie die aufgeführten Informationen ermittelt werden, bietet
+aktualisiert. Generell gilt dabei, dass jede Path message den kompletten Pfad
+enthalten muss. Pfade können also nicht stückweise übertragen werden. Dieses vorgehen
+bietet die Möglichkeit, dass Pfaddatenen nachträglich geändert werden können.
+Also kann beispielsweise die erste Lokalisierung innerhalb eines Pfades zu einem
+späteren Zeitpunkt abgeändert werden. 
+
+Um nachzuvollziehen wie die in Main Compare angezeigten Informationen ermittelt werden, bietet
 es sich an, zunächst den Typ der \textit{messages}, welche über die Pfad topics
 empfangen werden, zu analysieren. Denn auf dieser Basis leiten sich alle
 ermittelten Informationen ab. Wie bereits beschrieben sind die messages vom Typ
 \textit{nav\_msgs/Path}, der wie folgt definiert ist:
 
-\begin{lstlisting}[caption=ROS transformation message, label=lst:transform]
+\begin{lstlisting}[caption=ROS transformation message, label=lst:pathmsgs]
 Header header
   uint32 seq
   time stamp
@@ -478,9 +483,70 @@ geometry_msgs/PoseStamped[] poses
       float64 w
 \end{lstlisting}
 
-Zunächst ist zu erkennen dass dieser \textit{message} Typ aus anderen Typen
-zusammengesetzt ist. Auf der obersten Ebene ist dies ein
-\textit{Header} und ein Array von \textit{geometry\_msgs/PoseStamped} messages.
+Zunächst ist in \autoref{lst:pathmsgs} zu erkennen, dass sich dieser \textit{message} Typ aus anderen Typen
+zusammensetzt. Auf der obersten Ebene ist dies ein
+\textit{Header} und ein Array von \textit{geometry\_msgs/PoseStamped}.
+Der Header dient dazu, die Path message von anderen empfangenen
+Path messages zu unterscheiden und dazu die messages ordnen zu können. Die Ordnung kann dabei über eine Sequenznummer
+(seq) oder einen Zeitstempel (stamp) hergestellt werden. Das Feld frame\_id
+definiert einen Bezugsrahmen innerhalb von ROS, es wird aber im Kontext von
+Main Compare nicht ausgewertet und wird hier deswegen nicht genauer erläutert.
+Die eigentlichen Pfaddaten verbergen sich in dem Array von PoseStamped. Auch
+PoseStamped ist ein zusammengesetzer Typ, bestehend aus einem Header und einer
+Pose. Die Pose setzt sich aus einem Point und einer Quaternion zusammen.
+Der gefahrende Pfad wird nun dadurch in der Path message abgebildet, indem bei
+jeder durchgeführten Lokalisierung eine PoseStamped angelegt wird. Diese PoseStamped
+hält im Header die Zeit der Lokalisierung und eine Sequenznummer fest. In der
+Pose wird dann der bei der Lokalisierung ermittelte Punkt, als Point eingetragen. Die Quaternion
+hält fest, welche Ausrichtung dabei im Raum vorliegt und wird auch
+in die Pose eingefügt. Die Ausrichtung ist
+allerdings optional und wird in der derzeitigen Version von Main Compare nicht beachtet. 
+Außerdem lässt sich in \autoref{lst:pathmsgs} erkennen, dass die
+Lokalisierungen dreidimensional erfolgen können. Die von Main Compare
+ausgeführten Berechnungen sind aber auch mit Daten niederer Dimension möglich,
+indem die nicht genutze Dimension auf 0 gesetzt wird. Beispielsweise werden,
+in der derzeitigen Form des Referenzsystems, vom Roboter zweidimensionale
+Lokalisierungsdaten in der x-y Ebene übermittelt und die z Komponente erhält
+immer den Wert 0. Wie schon in Bezug auf die orientation erwähnt, werden nicht alle Komponenten der
+Pfad message in Main Compare verwendet. Für die derzeitige Version sind
+folgende Felder relevant:
+
+\begin{itemize}
+  \item poses.stamp (Typ ros::time)
+  \item pose.position.x (Typ float64)
+  \item pose.position.y (Typ float64)
+  \item pose.position.z (Typ float64)
+\end{itemize}
+
+Obwohl nicht alle Felder der Path message genutzt werden, ist dieser message Typ
+für Main Compare die geeignete Wahl, da er in ROS standardmäßig
+definiert ist, was die Definition und deren Verteilung, eines
+eigenen message Typs, vermeidbar macht. Außerdem sind die ungenutzen Felder nicht
+übermäßig groß und werden die Kapazitäten des Übertragungskanals kaum belasten.
+Vernachlässigt man die ungenutzten Felder des Header, der eine in ROS definierte Standardmessage ist, fallen nur
+zusätzliche 24 Byte für die ungenutze orientation, pro übertragenem Point, an.
+Darüberhinaus ist es denkbar, dass die orientation in späteren Versionen von
+Main Compare doch noch betrachtet wird und somit die durchzuführenden
+Änderungen klein ausfallen.
+
+Anhand der oben aufgezählten, genutzen Felder, lässt sich ein Pfad abstrakt durch eine Menge
+$M$ von Tupeln modellieren. Dabei setzen sich die Tupel aus einem Zeitstempel und einem dreidimensionalem
+Punkt zusammen. $M$ sei demnach wie folgt definiert:
+
+\begin{equation*}
+  \label{eqn:setdef}
+  M = \{ (p.stamp , p.position) \mid p \in poses \}
+\end{equation*}
+
+Die konkrete Repräsentierung des Modells erfolgt in Main Compare durch die
+Klassen \textit{TopicPath} und \textit{Position}. TopicPath repräsentiert dabei
+$M$. Position repräsentiert ein einzelnes Tupel. Dem Modell entsprechend enthält ein TopicPath
+Objekt eine Liste von Position Objekten.
+
+Anhand der abstrakten Modellierung eines Pfades, werden im Folgenden, die von
+Main Compare ausgeführten, Berechnungen erläutert. 
+
+- Klassen vorstellen, beschreiben, welche M in Main Compare repräsentieren
 
 \subsubsection{Pfadvergleichsverfahren}
 Als Grundlage für alle aufgeführten Features dienen die über des ROS
