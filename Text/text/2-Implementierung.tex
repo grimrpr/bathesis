@@ -596,17 +596,69 @@ bestimmen.
 %TODO Siehe dazu TopicPathManager::
 
 \subsubsection{Pfadvergleichsverfahren und Abstandsberechnung}
+
 Das Hauptziele von Main Compare ist es, dem Nutzer zu erleichtern, die
 Genauigkeit eines durch Lokalisierung gewonnenen Pfades, in Bezug auf einen
 Referenzpfad, abzuschätzen. Um dies zu tun, ist es notwendig, den Abstand von
 Lokalisierungen des zu untersuchenden Pfads, zu denen des Referenzpfads, zu
-ermitteln. In einem naiven Ansatz könnte man die Lokalisierungen direkt
-miteinander vergleichen, d.h. für jeden Punkt des Referenzpfades existiert auch
-ein Punkt im zu vergleichenden Pfad mit demselben timestamp. Dies wäre in einem
-Ansatz wie in  gezeigt möglich.
+ermitteln. In einem naiven Ansatz, um diesen Abstand zu bestimmen, könnte man die Lokalisierungen direkt
+miteinander vergleichen. Unter der Voraussetzung, dass für jeden Punkt des Referenzpfades auch
+ein Punkt im zu vergleichenden Pfad mit demselben Zeitstempel existiert. Der
+Vergleich zwischen Referenz und zu untersuchendem Pfad fällt dann denkbar einfach aus, denn man müsste nur den Abstand je
+zweier Punkte, mit demselben Zeitstempel, bestimmen.
+Das Problem bei dieser Methode ist jedoch, dass das Referenzsystem und die
+einzelnen Sensorknoten unabhängig voneinander sind und dadurch Lokalisierungen
+nicht immer zum selben Zeitpunkt oder mit einer anderen Frequenz durchführen 
+können. Um dies zu verhindern müsste man wie in Abb. gezeigt einen zentralen
+Taktgeber in das System integrieren, der durch ausgesendete Impulse, zum
+Beispiel in der Form einer ROS message, den Komponenten vorschreibt,
+wann eine Lokalisierung durchgeführt werden soll.
 %TODO bild test mit Tickgeber
+Die Einführung eines solchen Taktgebers verkompliziert jedoch die
+Testausführung und setzt bei allen am Test beteiligten Komponenten voraus, dass
+deren Software auf diesen Mechanismus reagiert. Zudem ist man während des Tests
+zwingend auf eine ungestörte Netzwerkkommunikation angewiesen, da sonst der
+Impuls nicht gleichmäßig oder gar nicht bei den Komponenten ankommt.
 
+Aufgrund dieser schwerwiegenden Nachteile wurde bei der Entwicklung von Main
+Compare ein Ansatz gewählt, der es den Komponenten erlaubt Lokalisierungen zu
+beliebigen Zeitpunkten und mit beliebiger Frequenz durchzuführen. Die einzige
+Voraussetzung ist dabei, dass die Uhren der Komponenten, mit einem gewissen
+tollerierbaren Fehler, synchronisiert werden. Dies sichert, dass die Zeitstempel der
+Lokalisierungen zuverlässig vergleichbar sind. Der Abstand wird wie folgt
+ermittelt, siehe dazu auch Abb. . Für jeden Punkt im zu vergleichenden Pfad $A$
 %TODO bild variante ohne tick
+wird der Abstand zum Refernzpfad $R$ bestimmt. Dazu wird der jeweilige
+Zeitstempel $z_a$ eines Punktes $p_a$ aus A einem passenden
+Zeitstempelintervall zweier aufeinanderfolgender Punkte $p_{r2}$ , $p_{r1}$ aus $R$ zugeordnet, sodass
+gilt:
+\[
+z_{r1} <= z_a < z_{r2}
+\]
+
+Ist dieses intervall gefunden wird der Abstand von $p_a$ zum Geradensegment
+$\overline{p_{r2} p_{r1}}$ bestimmt. Um diesen Abstand zu bestimmen wird das
+Lot auf die von $p_{r1}$ und $p_{r2}$ bestimmte Gerade ermittelt. Fällt das Lot
+dabei zwischen $p_{r1}$ und $p_{r2}$ auf die Gerade wird der Abstand vom
+Lotpunkt zu $p_a$ bestimmt. Fällt er jedoch außerhalb dieses Intervalls muss
+der Abstand, je nach Lage des Lotpunkts, entweder zu $p_{r1}$ oder $p_{r2}$
+bestimmt werden. Siehe dazu auch Abb. .
+%TODO bild abstandsbestimmung
+
+Charakteristisch bei dieser Art der Abstandsbestimmung ist, dass beim
+Referenzpfad zwischen zwei Lokalisierungen, durch das Geradensegment, die
+Position interpoliert wird. Es wird also angenommen, dass die tatsächlich ausgeführte
+Bewegung zwischen den Punkten, einer Gerade entspricht. Daraus folgt aber, dass man die
+Lokalisierungsfrequenz des Referenzpfades, an die Bewegungsgeschwindigkeit des
+Referenzsystems anpassen muss. Denn dadurch bleibt zwischen zwei
+Lokalisierungen des Referenzpfades die
+interpolierte Strecke klein und nähert sich stärker der tatsächlich gefahrenen
+Strecke an. Betrachtet man das derzeitige Referenzsystem, mit dem TurtleBot, so
+ist die Bewegungsgeschwindigkeit allerdings gering und eine sekündliche Lokalisierung
+erscheint ausreichend. Dies muss jedoch noch durch weitergehende Tests
+bestätigt werden.
+
+%TODO evtl. Verweis auf TopicPathManager::   Methode
 
 \subsubsection{Bestimmung empirischer Varianz}
 
