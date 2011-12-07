@@ -636,37 +636,128 @@ gilt:
 z_{r1} <= z_a < z_{r2}
 \]
 
-Ist dieses intervall gefunden wird der Abstand von $p_a$ zum Geradensegment
+Ist dieses Intervall gefunden, wird der Abstand von $p_a$ zum Geradensegment
 $\overline{p_{r2} p_{r1}}$ bestimmt. Um diesen Abstand zu bestimmen wird das
 Lot auf die von $p_{r1}$ und $p_{r2}$ bestimmte Gerade ermittelt. Fällt das Lot
 dabei zwischen $p_{r1}$ und $p_{r2}$ auf die Gerade wird der Abstand vom
-Lotpunkt zu $p_a$ bestimmt. Fällt er jedoch außerhalb dieses Intervalls muss
+Lotpunkt zu $p_a$ errechnet. Fällt er jedoch außerhalb dieses Intervalls muss
 der Abstand, je nach Lage des Lotpunkts, entweder zu $p_{r1}$ oder $p_{r2}$
 bestimmt werden. Siehe dazu auch Abb. .
 %TODO bild abstandsbestimmung
 
 Charakteristisch bei dieser Art der Abstandsbestimmung ist, dass beim
 Referenzpfad zwischen zwei Lokalisierungen, durch das Geradensegment, die
-Position interpoliert wird. Es wird also angenommen, dass die tatsächlich ausgeführte
-Bewegung zwischen den Punkten, einer Gerade entspricht. Daraus folgt aber, dass man die
-Lokalisierungsfrequenz des Referenzpfades, an die Bewegungsgeschwindigkeit des
-Referenzsystems anpassen muss. Denn dadurch bleibt zwischen zwei
-Lokalisierungen des Referenzpfades die
-interpolierte Strecke klein und nähert sich stärker der tatsächlich gefahrenen
+Position interpoliert wird. Es wird also angenommen, dass die tatsächlich
+ausgeführte Bewegung zwischen den Punkten, einer Gerade entspricht. Daraus
+folgt aber, dass man die Lokalisierungsfrequenz des Referenzpfades, an die
+Bewegungsgeschwindigkeit des Referenzsystems anpassen muss. Dabei soll
+zwischen zwei Lokalisierungen des Referenzpfades die interpolierte Strecke
+klein bleiben, denn dadurch nähert sie sich stärker der tatsächlich gefahrenen
 Strecke an. Betrachtet man das derzeitige Referenzsystem, mit dem TurtleBot, so
-ist die Bewegungsgeschwindigkeit allerdings gering und eine sekündliche Lokalisierung
-erscheint ausreichend. Dies muss jedoch noch durch weitergehende Tests
-bestätigt werden.
+ist die Bewegungsgeschwindigkeit allerdings gering und eine sekündliche
+Lokalisierung erscheint ausreichend. Dies muss jedoch noch durch weitergehende
+Tests bestätigt werden.
 
 %TODO evtl. Verweis auf TopicPathManager::   Methode
 
-\subsubsection{Bestimmung empirischer Varianz}
+\subsubsection{Bestimmung empirischer Varianz und Standardabweichung}
+Auf Basis der zuvor beschriebenen Abstandsberechnung wird in Main Compare die
+empirische Varianz der Abstände bestimmt. Um diese zu berechnen wird zunächst
+das arithmetische Mittel gebildet, welches ebenso in der Results Tabelle angezeigt wird.
+Anschließend wird die empirische Varianz $s^2$ gebildet. Die empirische Standardabweichung
+ist die Wurzel aus $s^s$ also $s$.
 
 \subsubsection{Bestimmung des Median der Abstände}
+Der Medians der Abstände, ist robuster gegenüber Ausreißern als das
+arithmetische Mittel und wird deshalb ermittelt und auch in der Results Tabelle
+aufgeführt.
 
-\subsection{Plug-in Konzept allgemein}
-\begin{itemize}
-  \item allgemein Qt Plugins
-  \item Vorstellen der Interfaces zum Schreiben eigener Plug-ins für Pathcompare
-  \item Beispiel Camera Plugin
-\end{itemize}
+\subsection{Das Plug-in Konzept}
+Im folgenden Abschnitt wird das Konzept des Pathcompare Plug-in Mechanismus
+erläutert und aufgezeigt, welche Schritte erforderlich sind, um eigene Plug-ins
+für Pathcompare zu erstellen. Realisiert sind die Plug-ins in Pathcompare
+mithilfe der Qt Plugin API. Diese gibt Strukturen vor, um Plug-ins zu
+definieren. Außerdem beinhaltet sie Klassen, um Plug-ins während der Laufzeit
+einer Applikation zu laden.  Bei Verwendung dieser API müssen, um Plug-ins zu
+erstellen, im wesentlichen zwei Schritte ausgeführt werde, dies sind:
+
+\begin{enumerate}
+  \item Definition eines Interface
+  \item Implementierung des Interfaces durch Plug-in
+\end{enumerate}
+
+Um eine Anwendung durch Plug-ins erweiterbar zu machen ist also zunächst erforderlich ein
+Interface zu definieren. Dieses Interface legt fest, welche Methoden durch ein
+Plug-in zu implementieren sind. Das Interface hat dabei
+die Form einer Klassendefinition mit nur rein virtuellen Funktionen. Zusätzlich
+wird diese Klassendefinition durch Qt Makros ergänzt, um es als Interface zu
+markieren. In Pathcompare ist dieses Interface vorgegeben und trägt den langen
+Namen \textit{ComparatorPluginFactoryInterface}. Wie die Implementierung dieses
+Interfaces erfolgt, wird nun anhand eines vorhandenen Plug-ins für Pathcompare erläutert.
+Dieses Plug-in trägt den Namen Camera View. In der derzeitigen Version von
+Pathcompare wird es, ebenso wie Main Compare, beim Starten der Anwendung geladen.
+Es dient dem Nutzer dazu ROS topics des Typs sensor\_msgs/Image zu
+visualisieren. Dieser Typ von Topic wird beispielsweise innerhalb von ROS
+genutzt um Kamerafeeds der Kinect zur Verfügung zu stellen. Camera View könnte also
+bei einer Fahrt des TurtleBots eingesetzt werden um dem Tester ein Bild der
+aktuellen Umgebung des Roboters zu vermitteln. Die Gestaltung der GUI dieses
+Plug-ins fällt einfach aus. Der Nutzer kann mit einer ComboBox eine topic
+auswählen. Nach der Auswahl, werden die empfangenden Bilder, der gewählten Image
+topic, eingeblendet. 
+
+Wie zuvor beschrieben muss jedes Pathcompare Plugin das Interface
+\textit{ComparatorPluginFactoryInterface} implementieren, so auch Camera View.
+
+Dieses Interface beinhaltet zwei Methoden, siehe dazu auch
+\autoref{lst:factoryinterface}.
+
+\begin{lstlisting}[caption=ROS transformation message, language=C++, basicstyle=\footnotesize, label=lst:factoryinterface]
+
+        virtual ComparatorPluginPtr createComperatorPlugin(ROSManager * ros_manager, QWidget *tab_widget) const = 0;
+        virtual QString getPluginName() const = 0;
+
+\end{lstlisting}
+
+Die Methode createComparatorPlugin() ist eine Factorymethode und erzeugt das
+eigenliche Objekt, welches die Funktionalität des Plug-ins beinhaltet. Dieser
+Umweg ist notwendig, da Plug-ins keine typischen Klassenobjekte sind. Denn bei
+Qt Plug-ins handelt es sich um shared libraries. In einer shared library können
+zwar Methoden ausführbar hinterlegt werden, aber kein eigenständiges Objekte
+mit Attributen existieren. Der Rückgabetyp von createComparatorPlugin() ist
+ComparatorPluginPtr, definiert durch \autoref{lst:returntypedef}.
+
+\begin{lstlisting}[caption=ROS transformation message, language=C++, basicstyle=\footnotesize, label=lst:returntypedef]
+//typedef for shared_ptr reference to ComparatorPlugin
+typedef boost::shared_ptr<ComparatorPlugin> ComparatorPluginPtr;
+\end{lstlisting}
+
+Es handelt sich also um einen Verweis auf ein Objekt der Klasse
+ComparatorPlugin. Diese Klasse ist der Basistyp, für das in der Factory Methode
+dynamisch erzeugte Objekt. In Camera View ist die Factory Methode wie folgt
+implementiert worden, siehe \autoref{lst:create}:
+
+\begin{lstlisting}[caption=ROS transformation message, language=C++, basicstyle=\footnotesize, label=lst:create]
+ComparatorPluginPtr PathcompareMainFactoryPlugin::createComparatorPlugin(ROSManager * ros_manager, QWidget *tab_widget) const
+{
+        ComparatorPluginPtr comp_plugin(static_cast<ComparatorPlugin *>(new CameraView(ros_manager, tab_widget)));
+        return comp_plugin;
+}
+\end{lstlisting}
+
+Es wird hierin ein Objekt des Typs CameraView angelegt, welches den Basistyp
+ComparatorPlugin besitzt. Im Konstruktor erhält es Verweise auf den ROSManager,
+welcher benötigt wird um ROS spezifische Aktionen durchzuführen. Als zweites
+Konstruktorargument wird die Zeichenfläche für die Camera View GUI übergeben.
+Am Ende der Methode wird das fertig angelegte Objekt zurückgegeben und steht
+damit Pathcompare zur Verfügung. 
+
+Die zweite Methode im Plug-in Interface, getName() liefert lediglich den Namen
+des Plug-ins zurück und wird in Pathcompare durch die Klasse PluginLoader
+genutzt.
+
+Zusammenfassend kann man also sagen, dass die eigenlichen Pathcompare Plug-in Interface
+Methoden ohne großen Aufwandt zu implementieren sind. Ein vollständiges
+Referenzbeispiel zur Implementierung neuer Plug-ins ist durch Camera View gegeben.
+Zu finden sind dabei alle relevanten Code- und Builddateien im Ordner
+pathcompareplugins/cameraview.
+
