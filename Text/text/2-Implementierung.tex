@@ -50,6 +50,14 @@ zu können, ist es zunächst erforderlich die Begrifflichkeiten innerhalb von
 \gls{ROS} zu klären. Im Folgendem werden diese aufgezeigt.
 
 %TODO figure ROS Komponenten hinzufügen und im Text referenzieren
+\begin{figure}[t]
+  \begin{center}
+    \fbox{\includegraphics{./graphics/ros_components}}
+  \end{center}
+  \caption{Beispielhafte Ausführung von ROS auf unterschiedlichen Maschinen}
+  \label{fig:roscomponents}
+\end{figure}
+
 Im Zentrum von ROS steht der sogenannte \textit{master}. Dieser wird als
 einzelne Instanz gestartet und wartet dann darauf, dass sich tools, die im
 Kontext von \gls{ROS} gestartet werden, bei ihm anmelden. Ein
@@ -58,8 +66,7 @@ Ist der \textit{master} nicht gestartet können auch keine \textit{nodes}
 gestartet werden. Die \textit{nodes} sind also alle zunächst auf Kommunikation mit dem \textit{master}
 angewiesen. Diese Kommunikation kann lokal oder nichtlokal ausgeführt werden,
 d.h. der \textit{master} kann sich auch auf einem anderen Rechner wie der
-\textit{node} befinden solange eine http Verbindung zwischen beiden hergestellt
-werden kann. Denn das Anmelden des \textit{nodes} beim master erfolgt über einen
+\textit{node} befinden solange eine http Verbindung zwischen beiden hergestellt werden kann. Denn das Anmelden des \textit{nodes} beim master erfolgt über einen
 \gls{XML-RPC}, getragen vom http. Für den tool Entwickler auf Anwendungsebene ist diese
 Kommunikation zur Anmeldung allerding völlig unsichtbar und er muss sich nicht darum kümmern.
 Das Ausführen von \textit{nodes} auf unterschiedlichen Rechnern ist natürlich ebenso
