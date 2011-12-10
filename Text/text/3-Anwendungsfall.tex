@@ -1,20 +1,87 @@
 \chapter{Anwendung}
 \label{sec:andwendung}
-In diesem Abschnitt soll ein typischer Anwendugsfall für Pathcompare
-beschrieben werden. 
+In diesem Abschnitt soll ein typischer Anwendugsfall für Pathcompare und dem
+Main Compare Plugin beschrieben werden. 
 
-\section{Installation}
+%\section{Installation}
+%
+%\begin{itemize}
+%  \item Betriebsysteme
+%  \item ROS version - diamondback
+%  \item package structure
+%  \item build calls
+%\end{itemize}
 
-\begin{itemize}
-  \item Betriebsysteme
-  \item ROS version - diamondback
-  \item package structure
-  \item build calls
-\end{itemize}
+\section{Ausführung Pathcompare}
 
-\section{Ausführung}
-\begin{itemize}
-  \item plugin location
-  \item ROS Master im günstigen Fall auf selber Maschine
-  \item starten pathcompare
-\end{itemize}
+Pathcompare ist in die ROS packages pathcompare und pathcompareplugins
+aufgeteilt. Die ausführbare Datei der Pathcompare Hauptanwendung befindet sich
+im package pathcompare. Im package pathcompareplugins befinden sich die
+Pahtcompare Plug-ins. Diese werden, wie im vorigen Abschnitten detailiert beschrieben, zur
+Laufzeit dynamisch durch die Hauptanwendung eingebunden.
+
+Ist ein ROS master gestartet, kann Pathcompare durch den ROS Befehl
+
+\begin{lstlisting}[caption=starting pathcompare, label=lst:rosrun]
+rosrun pathcompare pathcompare
+\end{lstlisting}
+
+ausgeführt werden.
+Dieser Befehl sucht dabei automatisch die ausführbare Dabei in der pathcompare
+Ordnerstruktur. Alternativ kann diese aber auch manuell ausgeführt werden.
+Dies setzt natürlich voraus, dass Pathcompare vorher erfolgreich kompiliert
+wurde. Für eine genaue Installationsanleitung siehe dazu den Anhang Installation
+oder die in den packages enthaltenen README.txt Dateien.
+%TODO readme Dateien
+
+
+\section{Ausführung des Masters}
+
+Test haben gezeigt, dass als Ausführungsort für den ROS master sich dieselbe
+Maschine anbietet, auf der auch Pathcompare läuft. Der Grund dafür ist, dass
+Pathcompare häufige Anfragen an dem master, zum auffrischen der Topic
+Übersicht, stellt. Läuft der master nicht lokal, sollte zumindest für eine
+Netzwerkanbindung mit möglichst niedriger Latenz gesorgt werden. Es kann
+ansonsten dazu kommen, dass Teile der GUI blockiert sind. Es wurde versucht
+diesem Problem durch caching entgegenzusteuern, indem stets eine Liste der
+aktuellen topics lokal im Programm vorgehalten wird. Die Liste soll dabei in einem
+separaten Thread regelmäßig aktualisiert werden werden. Allerdings reichte die
+Entwicklungszeit nicht aus um diese Änderung in die derzeitige Version
+fehlerfrei einzuarbeiten und ist deshalb noch nicht integriert. Siehe dazu auch
+Kapitel Fazit.
+
+
+\section{Konfiguration der Sensorknoten und Roboters}
+
+Wie im Kapitel Implementierung beschrieben wertet das Plug-in Main Compare,
+nav\_msgs::path messages aus. Diese werden von den Sensorknoten und dem Roboter
+bereitgestellt. Wann diese messages nach dem Start von Pathcompare gesendet
+werden kann beliebig bestimmt werden. Optimal ist es jedoch, wenn der Roboter
+und die Sensorknoten bereits während der Fahrt in regelmäßigen Abständen
+aktualisierte Pfadnachrichten versenden.  Dadurch erhält der Tester schon
+während der Testdurchführung von Main Compare ein Feedback welche Tendenzen
+sich durch die gemessenen Werte abzeichnen.
+
+\section{Tests}
+
+\subsection{Topic Übersich}
+Die Topic Übersicht innerhalb des Rahmens ließ sich unkompliziert Testen, nämlich durch
+starten verschiedener ROS nodes. Diese nodes stellen verschiedene topics zur
+Verfügung, welche in der Topic Übersicht eingeblendet werden sollen. Dies
+funktioniert zuverlässig und es konnten keine Probleme mit der Visualisierung
+festgestellt weden.
+
+\subsection{Abbonieren von topics durch Plug-ins}
+Das Abbonieren wird, wie im Abschnitt Implementierung genauer beschrieben, durch die
+Klasse ROSManager vorgenommen. Für die bisher entwickelten beiden Plug-ins Main
+Compare und Camera View traten während durchgeführter Defekttests keine
+Laufzeitfehler auf.
+
+\subsection{Main Compare}
+Eine Schwierigkeit beim Testen von Main Compare bestand zunächst darin,
+geeignete Eingabedaten in Form von path messages zu erhalten. Es konnten jedoch
+Pfaddaten, die durch Testfahren des Roboters entstanden sind,
+genutzt werden. Dadurch konnten während durchgeführtet Defekttest einige Fehler
+identifiziert und beseitigt werden. Allerdings stehen Tests mit sich
+kontinuierlich ändernden Pfaddaten z.B. von den Sensorknoten noch aus.
+
