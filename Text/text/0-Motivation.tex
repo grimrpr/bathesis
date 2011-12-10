@@ -6,70 +6,85 @@
 \label{sec:motivation}
 %==============================================================================
 
-Systeme zur Positionsbestimmung werden für zahlreiche Zwecke genutzt und deren
-Bedeutung wächst parallel zur Verbreitung immer neuer sogenannter
-\textit{location based services} und deren wachsender Nutzung.  Für Anwendungen
-im Freien haben sich Satelliten gestützte Systeme, welche hohe Genauigkeit
-bieten, etabliert.  Als bekanntes Beispiel sei hier das \textit{NAVSTAR-GPS}
-genannt, welches sich auch im zivil nutzen lässt.  Allerdings ergeben sich
-viele Anwendungsumgebungen, in denen derartige Systeme gar nicht, bzw.  nur
-ungenau funktionieren oder bewusst z.B. aus Kostengründen gemieden werden.
-Dies sind typischerweise Umgebungen in denen die Satellitensignale zu stark
-gedämpft werden oder vor allem durch Reflexionen bedingte
-Laufzeitverschiebungen, sich negativ auf die Genauigkeit auswirken, wie z.B.: 
-
-%Eventuell wird auch aus Kostengründen auf einen GPS Empfänger verzichtet.
-%mehr Quellen anbringen !!  (Aufzählen: innerhalb von Gebäuden,
-%Untergrund...(Signalabschirmung), ungenau Mehrwegeausbreitung in urbanen
-%Umgebungen)
+Systeme zur Lokalisierung werden für zahlreiche Zwecke genutzt und deren
+Bedeutung wächst parallel zur Verbreitung immer neuer sogenannter \gls{LBS}.
+Dies sind Anwendungen, die dem Nutzer auf Grundlage von Positionsdaten
+Informationen generieren können. Für Anwendungen im Freien haben sich
+Satelliten gestützte Lokalisierungssysteme, welche theoretisch hohe Genauigkeit
+bieten können, etabliert. Als bekanntes Beispiel sei hier das
+\textit{NAVSTAR-GPS} genannt, welches zivil und militärisch genutzt wird.
+Allerdings ergeben sich auch Anwendungsumgebungen, in denen derartige Systeme
+gar nicht, bzw. nur ungenau funktionieren oder bewusst z.B. aus Kostengründen
+gemieden werden. Dies sind typischerweise Umgebungen in denen die
+Satellitensignale zu stark gedämpft werden oder vor allem durch Reflexionen
+bedingte Laufzeitverschiebungen, sich negativ auf die Genauigkeit auswirken,
+wie z.B.: 
 
 \begin{itemize} 
   \item innerhalb von Gebäuden (``indoor'') 
   \item im Untergrund (Tunnel, Höhlen u.ä.) 
   \item im Bereich dicht bebauter urbaner Gebiete
-    (Mehrwegeausbreitung) \end{itemize}
+\end{itemize}
 
-Um in solchen Umgebungen dennoch Lokalisierung zu ermöglichen wurden und werden
-viele theoretische Konzepte und konkrete Systeme entwickelt. Einen Überblick
-hierzu bietet {\color{red}Quelle anbringen (mobile entity localization and
-tracking in GPS less enviroments - Buch)} Quelle anbringen (mobile entity
-localization and tracking in GPS less enviroments - Buch) Auch in der
-Arbeitsgruppe \textit{Computer Systems \& Telematics}, an der
-\textit{FU-Berlin}, wurde dem Problem der indoor Lokalisierung mit der
-Entwicklung eines \textit{Wireless Sensor Network (WSN)} basiertem Systems im
-Rahmen des Forschungsprojektes \textit{FeuerWhere}, begegnet.  Dieses Projekt
-entstand u.a. in Kooperation mit der Berliner Feuerwehr.  {\color{red}ist das
-wichtig zu wissen an dieser Stelle?} Ziel bei der Entwicklung war ein flexibles
-indoor Lokalisierungssystem zu schaffen, welches mit low-cost Komponenten bzw.
-ohne Spezialhardware konstruiert wurde.  Im Kern ist das System in der Lage die
-Entfernung zwischen involvierten Sensorknoten zu bestimmen und dadurch
-Rückschlüsse auf deren Position zu ermöglichen.  In dem WSN unterscheidet man
-zwei Arten von Knoten, mobile Knoten und Anker Knoten.  Diese unterscheiden
-sich nur dadurch, dass die Position eines Anker Knotens bekannt ist.  Bei einer
-hinreichenden Zahl von Anker Knoten im WSN kann dann per Trilateration bzw.
-Multilateration die Position eines mobilen Knotens ermittelt werden.
-{\color{red} add figure principle of trilateration ?} Die Entfernungsmessung
-zwischen zwei Knoten geschieht hierbei durch Laufzeitmessungen von per Funk
-gesendeten Round Trip Time (RTT) Paketen, wodurch eine teure sowie aufwendige
-Zeit-Synchronisierung zwischen den Knoten entfällt, da bei der Messung der RTT
-nur ein Knoten die Zeit berechnet.  Diese Laufzeitmessungen sind jedoch durch
-in der Hardware auftretenden Jitter und in \textit{non-line of sight (NLOS)}
-Umgebungen auftretende Mehrwegeausbreitung fehlerbehaftet.  Die genaue
-Funktionsweise und Untersuchung der Auftretenden Fehler ist beschrieben in.
-{\color{red} hier würde ich natürlich gerne Heiko's paper reffen. Frage: Ist
-das schon erlaubt?} Um diesen Fehler zu untersuchen, ist es sehr nützlich, ein
-möglichst genaues aber ebenso flexibles Testsystem {\color{red}Referenzsystem?}
-zur Verfügung zu haben, welches mögliche Anpassungen, Konfigurationen und
-Einsatzszenarien des indoor Lokalisierungssystems, in Hinblick auf dessen
-Genauigkeit, evaluierbar macht.  Der Implementierung und Analyse eines solchen
-Referenzsystems widmet sich diese Arbeit. 
-%Hierbei wird auch auf vergleichsweise low-cost Komponenten, wie beispielsweise
-%der\textit{Microsoft Kinect} zurückgegriffen.
+Um in solchen Umgebungen dennoch Lokalisierung zu ermöglichen, wurden und werden
+viele theoretische Konzepte und konkrete Systeme entwickelt. In der
+Arbeitsgruppe \gls{CST} an der \textit{FU-Berlin}, wurde dem Problem der
+indoor Lokalisierung mit der Entwicklung eines \gls{WSN} basierten Systems
+begegnet. Die dabei verwendete Infrastruktur und Lokalisierungsmethoden zielen
+darauf ab, die Umgebung in welcher sich lokalisiert wird, nicht vorher mit
+statischer Infrastruktur bestücken zu müssen. Das macht das System für spontane
+oder kostenkritische Lokalisierungsszenarien attraktriv wie beispielsweise für:
 
-  %-kurz halten: -Signallaufzeitmessung -zwei Arten von Knoten feste anchor
-  %Knoten mit bekannter Position -restliche Knoten sind mobil
-  %-Positionsbestimmung?
-  %
-  %-Notwendigkeit zum Test weil: -Laufzeitmessung fehlerbehaftet
-  %-Mehrwegausbreitung indoor -viele Stellschrauben der Positionsbestimmung
+\begin{itemize}
+  \item Rettungseinsätze 
+  \item Forschungsmissionen
+  \item militärische Einsätze
+\end{itemize}
+
+So entstand vorausgehende Forschung der Arbeitsgruppe in diesem Bereich u.a. in
+Kooperation mit der Berliner Feuerwehr. Die Sensorknoten des WSN sind in mobile
+Knoten und Ankerknoten aufgeteilt. Das Ziel ist es mit einem mobilen Knoten
+eine Lokalisierung durchzuführen. Die Grundlage dafür bieten die Ankerknoten,
+dessen Position bekannt ist. Die mobilen Knoten ermitteln dann direkt mittels
+der Ankerknoten oder inderekt über andere mobile Knoten ihre Position. Die
+Lokalisierung kann dabei mithilfe verschiedener Algorithmen erfolgen. Da diese
+Algorithmen untereinander und in Abhängigkeit verschiedener
+Umgebungseigenschaften mit unterschiedlicher Präzision lokalisieren, ist es
+notwendig Vergleiche zwischen ihnen anzustellen. Ein Weg dies zu tun sind
+Simulationen der verschiedenen Algorithmen. Simulationen können kostengünstig
+und schnelle Resultate liefern. Der Nachteil ist allerdings, dass sie stets
+von realen Bedingungen abstrahieren. So kann es sein, dass eine durch
+Abstraktion ausgeblendete Eigenschaft einer realen Umgebung, direkt oder
+indirekt, die durch Simulation erwarteten Resultate verzerrt. Daher entstand
+der Bedarf auch praktische Tests in einer indoor Umgebung durchzuführen und es
+wurde die Aufgabe gestellt, ein Referenzsystem aufzubauen. Ein solches
+Referenzsystem soll in einer indoor Umgebung präzise Lokalisierungen
+durchführen, welche als Referenzwerte für Lokalisierungen der mobilen
+Sensorknoten dienen. Das Referenzsystem ist mithilfe eines mobilen Roboters
+realisiert worden, welcher durch Abfahren einer Strecke und stets wiederholende
+Lokalisierung den gefahrenen Pfad aufzeichnet.  An ihm angebrachte mobile
+Sensorknoten führen ebenfalls wiederholt Lokalisierungen durch. Im Kontext des
+Referenzsystem wurde eine Software, gennannt Pathcompare, entwickelt.  Diese
+ermöglicht es, Pfade des Referenzsystems und die der Sensorknoten, während
+eines Tests, zusammenzuführen, um einem Tester eine Übersicht über die
+erreichte Präzision der Lokalisierungen von Sensorknoten gegenüber dem
+Referenzpfad aufzuzeigen. Pathcompare bietet dazu eine übersichtliche GUI und
+kann durch Plug-ins in seiner Funktionalität erweitert werden.
+
+\section{Struktur der Arbeit}
+Die Arbeit ist in mehrere Abschnitte gegliedert, die unterschiedliche Aspekte
+von Pathcompare erläutern. Zunächst wird im unmittelbar folgenden Abschnitt
+``Aufgabenstellung'' die Zielsetzung von Pathcompare und der gewählte
+Lösungsansatz aufgezeigt. Dazu wird auch auf die Gesamtstruktur des
+Referenzsystems eingegangen und der mobile Roboter genauer beleuchtet.  Danach
+folgt der Abschnitt ``Implementierung''. Hier wird in Detail auf Pathcompares
+Bestandteile eingegangen. Dabei werden deren Funktionsweisen und
+Designentscheidungen betrachtet. Ein wesentliches Element dieses Abschnitts ist
+außerdem die Betrachtung von Pathcompares Plug-in Konzept und den
+Voraussetzungen zum Schreiben eigener Pathcompare Plug-ins. Im Abschnitt
+``Anwendung'' werden durchgeführte Tests von einzelnen Komponenten Pathcompares
+betrachtet und nötige Voraussetzungen zum erfolgreichen Ausführen der Anwendung
+aufgezeigt. Das ``Fazit'' fasst die wesentlichen Eigenschaften von Pathcompare
+zusammen und verweist auf mögliche Verbesserungen und noch offene
+Fragestellungen.
 
