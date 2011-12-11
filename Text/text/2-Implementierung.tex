@@ -6,53 +6,54 @@
 
 Innerhalb des Referenzsystems wird \gls{ROS} im Zusammenhang mit der Steuerung
 des Roboters genutzt und um die während einer Testfahrt gewonnenen Pfaddaten
-zur Verfügung zu stellen. Im Folgenden wird genauer auf die Fähigkeiten und
-Ziele von \gls{ROS} eingegangen.
+zu übermitteln. Im Folgenden wird genauer auf die Fähigkeiten und
+Ziele von ROS eingegangen.
 
-Obwohl der Name zunächst anderes vermuten lässt ist \gls{ROS} kein
+Obwohl der Name zunächst anderes vermuten lässt, ist ROS kein
 Betriebssystem im klassischem Sinne. Es ist vielmehr eine Sammlung von
-Anwendungen, welche auf ein Betriebssystem angewiesen sind um ausgeführt werden
-zu können. ROS bietet aber Funktionalitäten, die abstrahiert betrachtet
-Betriebsystemfunktionen ähneln. Charakteristisch ist hierbei seine Fähigkeit
+Anwendungen, welche auf ein Betriebssystem angewiesen sind, um ausgeführt werden
+zu können. ROS bietet aber Funktionalitäten, die ,abstrahiert betrachtet,
+Betriebsystemfunktionen ähneln. Charakteristisch ist hierbei ROS Fähigkeit
 lokal- oder nichtlokal ausgeführte Programme zu Verbinden und eine
-strukturierte Kommunikation zwischen diesen zu ermöglichen. Die wesentlichen
-Elementareigenschaften von ROS sind:
+strukturierte Kommunikation zwischen diesen zu ermöglichen. Die grundlegenden
+Ansätze, die ROS verfolgt sind:
 
 \begin{itemize}
   \item multi-tool Ansatz
+  \item verteiltes Rechnen 
   \item peer-to-peer Kommunikation
   \item keine feste Bindung an Programmiersprache
   \item frei und Open-Source
 \end{itemize}
 
-Multi-tool Ansatz bedeutet, dass \gls{ROS} die Fähigkeiten verschiedener
-Programme und Libraries zur Verfügung stellt. Diese sind jedoch nicht fest in
-den Kern von \gls{ROS} eingebaut sondern modular integriert. Als analoges
-Beispiel in Hinblick auf Betriebssysteme kann man \gls{ROS} also als einen
-Mikrokernel verstehen. Dies bietet den Vorteil, dass \gls{ROS} selbst
-vergleichsweise klein ist und nur wirklich gebrauchte tools geladen werden
-müssen.  Die peer-to-peer Kommunikation bezieht sich auf die Kommunikation
-zwischen diesen, in \gls{ROS} integrierten, Modulen. Diese wird durch den
-\gls{ROS} Kern gesteuert. Der Kern von \gls{ROS} ist nativ in C++
+Multi-tool Ansatz bedeutet, dass ROS die Fähigkeiten verschiedener Programme
+und Libraries zur Verfügung stellt. Diese sind jedoch nicht fest in den Kern
+von ROS eingebaut, sondern modular integriert. Als analoges Beispiel in
+Hinblick auf Betriebssysteme kann man ROS diesbezüglich mit einen Mikrokernel
+vergleichen. Die Modularität bietet den Vorteil, dass der ROS Kern
+vergleichsweise klein ist. Außerdem müssen während der Ausführung nur wirklich
+gebrauchte tools geladen werden. Die peer-to-peer Kommunikation bezieht
+sich auf die Kommunikation zwischen diesen, in ROS integrierten, Modulen. Diese
+wird durch den ROS Kern gesteuert. Der Kern von ROS ist ursprünglich in C++
 implementiert, es existieren jedoch bereits Portierungen in andere Sprachen wie
-Python, Octave und Lisp um die \gls{ROS}-\gls{API} einer größeren Zahl von
+Python, Octave und Lisp um die ROS-\gls{API} einer größeren Zahl von
 Entwicklern und Projekten die Nutzung zu ermöglichen. Weitere Portierungen
 sollen sich in der Implementierung befinden.
 
 %TODO hier Referenz zu ROS paper bringen oder später?
 
-\gls{ROS} ist darüberhinaus frei Verfügbar und Open-Source. Man kann beliebige
-Programme, als Module zur Erweiterung und Nutzung von \gls{ROS} hinzufügen, wie
+ROS ist darüberhinaus frei verfügbar und Open-Source. Man kann beliebige
+Programme, als Module zur Erweiterung und Nutzung von ROS hinzufügen, wie
 es auch im Rahmen des Referenzsystems geschehen ist. Bei allgemeinem Nutzem und
 gegebener Pflege der Software, besteht die Möglichkeit, dass diese offiziell zu
 ROS hinzugefügt werden.
 
-Um die konkreten Abläufe und Komponenten innerhalb von \gls{ROS}
+Um die konkreten Abläufe und Komponenten innerhalb von ROS
 veranschaulichen zu können und damit auch den Bezug zu Pathcompare herstellen
 zu können, ist es zunächst erforderlich die Begrifflichkeiten innerhalb von
-\gls{ROS} zu klären. Im Folgendem werden diese aufgezeigt.
+ROS zu klären. Im Folgendem werden diese aufgezeigt, siehe dazu auch
+\autoref{fig:roscomponents}.
 
-%TODO figure ROS Komponenten im Text referenzieren
 \begin{figure}[t]
   \begin{center}
     \fbox{\includegraphics{./graphics/ros_components}}
@@ -63,20 +64,22 @@ zu können, ist es zunächst erforderlich die Begrifflichkeiten innerhalb von
 
 Im Zentrum von ROS steht der sogenannte \textit{master}. Dieser wird als
 einzelne Instanz gestartet und wartet dann darauf, dass sich tools, die im
-Kontext von \gls{ROS} gestartet werden, bei ihm anmelden. Ein als Prozess
-gestartetes tool wird dabei innerhalb von \gls{ROS} als \textit{node}
-bezeichnet.  Ist der \textit{master} nicht gestartet können auch keine
-\textit{nodes} gestartet werden. Die \textit{nodes} sind also alle zunächst auf
-Kommunikation mit dem \textit{master} angewiesen. Diese Kommunikation kann
-lokal oder nichtlokal ausgeführt werden, d.h. der \textit{master} kann sich
-auch auf einem anderen Rechner wie der \textit{node} befinden solange eine http
-Verbindung zwischen beiden hergestellt werden kann. Denn das Anmelden des
-\textit{nodes} beim master erfolgt über einen \gls{XML-RPC}, getragen vom http.
-Für den tool Entwickler auf Anwendungsebene ist diese Kommunikation zur
-Anmeldung allerding völlig unsichtbar und er muss sich nicht darum kümmern.
-Das Ausführen von \textit{nodes} auf unterschiedlichen Rechnern ist natürlich
-ebenso möglich und wie zuvor bereits erwähnt eines der Kernfunktionen von
-\gls{ROS}.  Dies lässt sich vorteilhaft ausnutzen durch zum Beispiel:
+Kontext von ROS gestartet werden, bei ihm anmelden. Ein als Prozess gestartetes
+tool wird dabei innerhalb von ROS als \textit{node} bezeichnet. Ist der
+\textit{master} nicht gestartet, können auch keine \textit{nodes} gestartet
+werden. Die \textit{nodes} sind also alle zunächst auf Kommunikation mit dem
+\textit{master} angewiesen. Diese Kommunikation kann lokal oder nichtlokal
+ausgeführt werden, d.h. der \textit{master} kann sich auch auf einem anderen
+Rechner als der \textit{node} befinden, solange eine http Verbindung zwischen
+beiden hergestellt werden kann. Denn das Anmelden des \textit{nodes} beim
+master erfolgt über einen \gls{XML-RPC}, getragen vom http. Für den 
+Softwareentwickler auf Anwendungsebene ist diese Kommunikation zur Anmeldung allerding
+vollständig durch die ROS API gekapselt und er muss sich in dieser Hinsicht
+nicht explizit um Verbindungsaufbau oder Nachrichtenaustausch kümmern. Wie in
+der \autoref{fig:roscomponents} dargestellt, können auch die nodes
+untereinander auf unterschiedlichen Rechnern ausgeführt werden. Dies ist eines
+der wichtigsten lässt sich
+beispielsweise vorteilhaft ausnutzen durch:
 
 \begin{itemize}
   \item Verteilung oder Auslagerung rechenintensiver \textit{nodes} auf potente Hardware
@@ -90,7 +93,7 @@ besonders im Bezug auf diese Arbeit wichtig, da Pfaddaten des Roboters und der
 zu testenden Sensorknoten für \textit{Pathcompare} verfügbar gemacht werden
 müssen.  Die Kommunikation zwischen Nodes erfolgt über sogenannte
 \textit{messages}, diese enthalten die serialisierte Form der zu übertragenden
-Daten.  \gls{ROS} bietet in seinen Kernpakten bereits zahlreiche Definitionen
+Daten. ROS bietet in seinen Kernpakten bereits zahlreiche Definitionen
 für unterschiedliche \textit{message} Typen, aber es ist auch möglich eigene zu
 generieren und dies wird von zahlreichen Paketen getan um Daten maßgeschneidert
 übertragen zu können. Einmal definierte \textit{message} Typen können wiederum
@@ -116,11 +119,11 @@ geometry_msgs/Quaternion rotation
 Soll ein \textit{node} seine \textit{messages} anderen \textit{nodes} senden
 können, so muss dies zunächst durch festlegen einer sogenannten \textit{topic}
 beim \textit{master} angemeldet werden. Dann wird diese \textit{topic} für
-andere \textit{nodes} im \gls{ROS} über den \textit{master} sichtbar.  Eine
+andere \textit{nodes} im ROS über den \textit{master} sichtbar.  Eine
 \textit{topic} besteht im wesentlichen aus zwei Teilen, einer \textit{topic-id}
 und einem \textit{message-type}. Wobei der \textit{message-type} angibt welcher
 Typ von \textit{messages} über diese \textit{topic} verschickt wird. Die
-\textit{topic-id} dient zur eindeutigen Identifikation innerhalb des \gls{ROS}.
+\textit{topic-id} dient zur eindeutigen Identifikation innerhalb des ROS.
 \textit{Nodes} welche \textit{messages} einer \textit{topic} empfangen sollen,
 müssen diese \textit{topic} dann beim \textit{master} abbonieren. In
 programmatischer Hinsicht wird beim Empfang neuer Nachrichten innerhalb des
@@ -130,7 +133,7 @@ Frequenz ein, als abgearbeitet werden können, so kommt es irgendwann zu
 Verlusten wenn die einstellbare Größe der \textit{message queue} überschritten
 wird.
 
-Zwei weitere wichtige Begriffe in \gls{ROS} betreffen die Organisierung der
+Zwei weitere wichtige Begriffe in ROS betreffen die Organisierung der
 Dateien die zu den einzelnen tools gehören. Dies sind:
 
 \begin{itemize}
@@ -139,15 +142,15 @@ Dateien die zu den einzelnen tools gehören. Dies sind:
 \end{itemize}
 
 Ein \textit{package} beinhaltet den Code, Libraries sowie die ausführbare Datei
-eines tools bzw. \textit{nodes}.  In \gls{ROS} sind für packages bestimmte
-Ordnerstrukturen und Dateien festgelegt sodass mithilfe der von \gls{ROS}
+eines tools bzw. \textit{nodes}.  In ROS sind für packages bestimmte
+Ordnerstrukturen und Dateien festgelegt sodass mithilfe der von ROS
 mitgebrachten tools \textit{packages} leicht gebaut, gesucht und gestartet
-werden können. Beispielsweise basiert das \gls{ROS} build System auf cmake und
+werden können. Beispielsweise basiert das ROS build System auf cmake und
 so ist eine vorkonfigurierte \textit{CMakeLists.txt} in jedem \textit{package}
 grundsätzlich enthalten. Eine Zusammenfassung mehrerer \textit{packages} wird
 als \textit{stack} bezeichnet. 
 
-\textit{Pathcompare} ist also, im Bezug auf \gls{ROS}, während der Ausführung
+\textit{Pathcompare} ist also, im Bezug auf ROS, während der Ausführung
 ein einzelner \textit{node}, welcher \textit{topics} abboniert, um
 \textit{messages} zu empfangen. Es wird in einem späteren Teil darauf
 eingegangen, welche \textit{messages} das genau sind.  Alle zum Kompilieren und
@@ -174,7 +177,7 @@ Ausführen nötige Dateien sind dabei in zwei \textit{packages} namens
 
 \textit{Pathcompare} ist darauf ausgelegt alle Informationen für den Nutzer in
 einer Benutzeroberfläche (fortan als GUI bezeichnet) zu visualisieren.
-Da die Anbindung an \gls{ROS} über C++ erfolgt, lag nahe auch die GUI in C++
+Da die Anbindung an ROS über C++ erfolgt, lag nahe auch die GUI in C++
 umzusetzen. Dazu wurde das Qt Framework gewählt. Qt ist in C++ implementiert, wobei
 allerdings auch Anbindungen für zahlreiche andere Sprachen wie z.B.
 Java, C\#, Ruby oder Python existieren. Die Entwicklung von Qt begann 1991 und
@@ -221,7 +224,7 @@ hat Folgen für den Build Vorgang, denn die mit Annotationen versehenen Klassen
 müssen dann zuerst, mit dem von Qt bereitgestelltem \gls{MOC} übersetzt werden.
 Standardmäßig wird in \textit{Qt} das Build Programm qmake verwendet, welches
 die nötigen Aufrufe des \gls{MOC} automatisch veranlasst. In Hinblick auf
-\textit{Pathcompare} war aber eine Integration in das von \gls{ROS}
+\textit{Pathcompare} war aber eine Integration in das von ROS
 genutzte Build verfahren cmake notwendig. Hierbei muss beachtet werden,
 dass cmake die Dateien welche einen \gls{MOC} Aufruf notwendig machen, in der
 derzeitigen Version, nicht selbständig erkennt. Diese müssen manuell in der
@@ -311,7 +314,7 @@ darauf aufzubauen. Auf Details bezüglich des Ladens der Plug-ins und deren
 Funktionsweise wird in einem folgendem Abschnitt eingegangen. 
 %TODO Referenz zu Plug-in Abschnitt
 
-Die Topic Übersicht zeigt die momentan im \gls{ROS} verfügbaren Topics an. 
+Die Topic Übersicht zeigt die momentan im ROS verfügbaren Topics an. 
 Um die Übersicht auf die Topics zu strukturieren ist sie derart
 gestaltet, dass Topics desselben \textit{message} Typs gruppiert werden. Diese
 Gruppen werden dann kompakt im Topic Übersicht Fenster angezeigt und können dort durch
@@ -347,7 +350,7 @@ Die Hauptaufgabe des Rahmens ist es eine Anbindung an ROS zu gewährleisten.
 Diese Anbindung muss es den Plug-ins ermöglichen, benötigte \textit{topics} zu
 abbonieren. Für diese Anbindung ist in \textit{Pathcompare} die Klasse
 \textit{ROSManager} verantwortlich. Im Konstruktor dieser Klasse wird durch
-entsprechende \gls{ROS} API Aufrufe der \textit{node} \textit{pathcompare}
+entsprechende ROS API Aufrufe der \textit{node} \textit{pathcompare}
 erstellt. Dies geschieht durch starten eines separaten Threads, da der ROS Code
 in einer eigenen while-Schleife ausgeführt werden muss, die über die gesamte
 Lebenszeit des \textit{nodes} bearbeitet wird. Innerhalb dieser Schleife wird
@@ -400,7 +403,7 @@ späteren Abschnitt aufgezeigt.
 Die Klasse \textit{ROSManager} sorgt außerdem dafür, dass die Topic Übersicht
 regelmäßig aufgefrischt wird. Es wird also dem Nutzer ersichtlich, sollten neue
 \textit{topics} erscheinen oder wenn diese nicht mehr verfügbar sind.
-Da die \gls{ROS} \gls{API} keinen event service anbietet um Beobachter zu benachrichtigen,
+Da die ROS \gls{API} keinen event service anbietet um Beobachter zu benachrichtigen,
 falls sich der Status von \textit{topics} ändert, stellt der
 \textit{ROSManager} sekündlich eine Anfrage an den \textit{master} nach dem
 aktuellen Stand der topics.  Dies ist gesteuert über einen QTimer in Verbindung
