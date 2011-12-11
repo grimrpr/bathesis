@@ -87,21 +87,21 @@ Fähigkeit von ROS lässt sich beispielsweise vorteilhaft ausnutzen durch:
 
 So muss beispielsweise ein mobiler Roboter Bilderkennungs Aufgaben nicht selbst
 ausführen, sondern kann diese an einen \textit{node} weiterleiten der auf einem
-Rechencluster ausgeführt wird. Die zweite genannte Möglichkeit ist auch
-besonders im Bezug auf diese Arbeit wichtig, da Pfaddaten des Roboters und der
-zu testenden Sensorknoten für \textit{Pathcompare} verfügbar gemacht werden
-müssen.  Die Kommunikation zwischen Nodes erfolgt über sogenannte
-\textit{messages}, diese enthalten die serialisierte Form der zu übertragenden
-Daten. ROS bietet in seinen Kernpakten bereits zahlreiche Definitionen
-für unterschiedliche \textit{message} Typen, aber es ist auch möglich eigene zu
-generieren und dies wird von zahlreichen Paketen getan um Daten maßgeschneidert
-übertragen zu können. Einmal definierte \textit{message} Typen können wiederum
-rekusiv in anderen \textit{message} Typen verwendet werden.  Ein Beispiel für
-eine message ist in \autoref{lst:transform} dargestellt; eine Transformation
-die in ROS geometry\_msgs definiert ist. Sie besteht wie erkennbar aus den zwei
-Typen \textit{Vector3} und \textit{Quaternion}. Letzterer beschreibt die
-Rotation und der erste die Translation. Zusammengefügt ergibt dies eine
-Transformationsnachricht.
+Rechencluster ausgeführt wird. Der zweite Punkt, also das Zusammenführen von
+Daten ist auch besonders im Bezug auf diese Arbeit wichtig, da Pfaddaten des
+Roboters und der zu testenden Sensorknoten für \textit{Pathcompare} verfügbar
+gemacht werden müssen.  Die Kommunikation zwischen nodes erfolgt über
+sogenannte \textit{messages}, diese enthalten die serialisierte Form der zu
+übertragenden Daten. ROS bietet in seinen Kernpakten bereits zahlreiche
+Definitionen für unterschiedliche \textit{message} Typen, aber es ist auch
+möglich eigene zu generieren und dies wird von zahlreichen Paketen getan, um
+Daten maßgeschneidert übertragen zu können. Einmal definierte \textit{message}
+Typen können wiederum rekusiv in anderen \textit{message} Typen verwendet
+werden. Ein Beispiel für eine message ist in \autoref{lst:transform}
+dargestellt. Dieser Typ von message ist standardmäßig in ROS definiert.
+Sie besteht wie erkennbar aus den zwei Typen \textit{Vector3} und
+\textit{Quaternion}. Letzterer beschreibt die Rotation und der erste die
+Translation. Zusammengefügt ergibt dies eine Transformationsnachricht.
 
 \begin{lstlisting}[caption=ROS transformation message, label=lst:transform]
 geometry_msgs/Vector3 translation
@@ -116,21 +116,26 @@ geometry_msgs/Quaternion rotation
 \end{lstlisting}
 
 Soll ein \textit{node} seine \textit{messages} anderen \textit{nodes} senden
-können, so muss dies zunächst durch festlegen einer sogenannten \textit{topic}
-beim \textit{master} angemeldet werden. Dann wird diese \textit{topic} für
-andere \textit{nodes} im ROS über den \textit{master} sichtbar.  Eine
-\textit{topic} besteht im wesentlichen aus zwei Teilen, einer \textit{topic-id}
-und einem \textit{message-type}. Wobei der \textit{message-type} angibt welcher
-Typ von \textit{messages} über diese \textit{topic} verschickt wird. Die
-\textit{topic-id} dient zur eindeutigen Identifikation innerhalb des ROS.
-\textit{Nodes} welche \textit{messages} einer \textit{topic} empfangen sollen,
-müssen diese \textit{topic} dann beim \textit{master} abbonieren. In
-programmatischer Hinsicht wird beim Empfang neuer Nachrichten innerhalb des
-\textit{nodes} eine festgelegte callback Methode aufgerufen um die
+können, so muss er dies zunächst durch festlegen einer sogenannten
+\textit{topic} beim \textit{master} anmelden. Über den \textit{master} wird
+dadurch diese \textit{topic} für andere \textit{nodes} im ROS sichtbar. Eine
+\textit{topic} ist definiert durch eine sogenannte \textit{topic-id}, einem
+eindeutigen String. Dieser ist vergleichbar mit einer URL und dient zur
+Identifikation innerhalb des ROS. Eine weitere festgelegte
+Eigenschaft einer \textit{topic} ist der Typ, der über sie versendeten
+\textit{messages}. \textit{Nodes} welche \textit{messages} einer
+\textit{topic} empfangen sollen, müssen diese \textit{topic} dann beim
+\textit{master} abbonieren. Der \textit{master} vermittelt dann eine
+peer-to-peer Verbindung zwischen dem Anbieter node der topic und dem
+Abbonenten. Generell gilt dabei, dass topics einen unidirektionalen
+Kommunikationsweg darstellen, denn es werden nur vom Anbieter aus messages
+gesendet, der oder die Abbonenten der topic sind reine Empfänger. 
+In programmatischer Hinsicht wird beim Empfang neuer Nachrichten innerhalb des
+\textit{nodes} eine festgelegte callback Methode aufgerufen, um die
 \textit{messages} zu bearbeiten. Treffen dabei Nachrichten mit einer höheren
 Frequenz ein, als abgearbeitet werden können, so kommt es irgendwann zu
-Verlusten wenn die einstellbare Größe der \textit{message queue} überschritten
-wird.
+Verlusten, wenn die Größe der \textit{message queue} beim Empfänger überschritten
+wird. Die größe dieser queue kann jedoch durch die ROS API gesteuert werden.  
 
 Zwei weitere wichtige Begriffe in ROS betreffen die Organisierung der
 Dateien die zu den einzelnen tools gehören. Dies sind:
@@ -144,33 +149,18 @@ Ein \textit{package} beinhaltet den Code, Libraries sowie die ausführbare Datei
 eines tools bzw. \textit{nodes}.  In ROS sind für packages bestimmte
 Ordnerstrukturen und Dateien festgelegt sodass mithilfe der von ROS
 mitgebrachten tools \textit{packages} leicht gebaut, gesucht und gestartet
-werden können. Beispielsweise basiert das ROS build System auf cmake und
-so ist eine vorkonfigurierte \textit{CMakeLists.txt} in jedem \textit{package}
-grundsätzlich enthalten. Eine Zusammenfassung mehrerer \textit{packages} wird
-als \textit{stack} bezeichnet. 
+werden können. Beispielsweise basiert das ROS build System auf cmake und so ist
+eine vorkonfigurierte cmake-Buildatei, genannt \textit{CMakeLists.txt}, in jedem
+\textit{package} grundsätzlich enthalten. Eine Zusammenfassung mehrerer
+\textit{packages} wird als \textit{stack} bezeichnet. 
 
-\textit{Pathcompare} ist also, im Bezug auf ROS, während der Ausführung
-ein einzelner \textit{node}, welcher \textit{topics} abboniert, um
-\textit{messages} zu empfangen. Es wird in einem späteren Teil darauf
-eingegangen, welche \textit{messages} das genau sind.  Alle zum Kompilieren und
+Überträgt man die vorgestellten ROS Begriffe auf Pathcompare so ist
+dieses tool, während der Ausführung,
+ein einzelner \textit{node}, welcher \textit{topics} abbonieren kann, um
+\textit{messages} zu empfangen. Es wird im Teil Implementierung darauf
+eingegangen, welche \textit{messages} das genau sind. Alle zum Kompilieren und
 Ausführen nötige Dateien sind dabei in zwei \textit{packages} namens
 \textit{pathcompare} und \textit{pathcompareplugins} aufgeteilt.
-
-%TODO figure einfügen referenzsystem im ros
-
-\begin{itemize}
-  \item Warum brauchen wir ROS?
-  \item Wer entwickelt ROS? (Stanford University \& WillowGarage \& community)
-  \item Was sind die Grundeigenschaften 
-  \item multitool Ansatz
-  \item strukturierte Kommunikation zwischen den Tools
-  \item free and open source
-  \item multilingual 
-  \item Begrifflichkeiten des ROS (Stack, Package, Node, Master, Topic, Message)
-  \item Topologie (figure: Roboter, Master, Pathcompare , Sensorknoten)
-  \item plattformen: Ubuntu
-  \item standard Buildsystem cmake
-\end{itemize}
 
 \subsection{Qt}
 
