@@ -58,7 +58,7 @@ ROS zu klären. Im Folgendem werden diese aufgezeigt, siehe dazu auch
   \begin{center}
     \fbox{\includegraphics{./graphics/ros_components}}
   \end{center}
-  \caption{Beispielhafte Ausführung von ROS auf unterschiedlichen Maschinen}
+  \caption{Beispielhafte Ausführung von ROS auf unterschiedlichen Rechnern}
   \label{fig:roscomponents}
 \end{figure}
 
@@ -176,81 +176,88 @@ ist zum Zeitpunkt des Schreibens in der Version 4.7.4 verfügbar. Das Framework 
 mittlerweile nicht mehr nur aus reinen GUI Bibliotheken, sondern stellt auch
 z.B. Netzwerk-, SQL- und andere Anwendungs-Bibliothken zur Verfügung.
 
-Für die Entwicklung von \textit{Pathcompare} waren neben den GUI Bibliotheken,
-besonders folgende Konzepte und Funktionen beim Entwickeln vorteilhaft: 
+Ein entscheidender Vorteil des Qt Frameworks ist die gebotene große
+Plattformunabhängigkeit.
+Gleichzeitig wird für alle unterstützten Betriebssysteme, deren nativer Look\&Feel
+verwendet. Gleicher Look\&Feel bedeutet dabei, dass das Erscheinungsbild von GUI Elementen der
+Qt Anwendung dem Erscheinungsbild von GUI Elementen des Betriebssystems
+gleicht.
+Für die Entwicklung von \textit{Pathcompare} waren neben den GUI Bibliotheken
+und schon genannten Vorteilen,
+besonders folgende Konzepte und Funktionen beim Entwickeln von Nutzen: 
 
 \begin{itemize}
   \item Signal-Slot Konzept
   \item Plattformunabhängigkeit
-  \item Containerklassen mit praktischen Hilfsmethoden
   \item graphischer GUI Designer 
+  \item Containerklassen mit praktischen Hilfsmethoden
 \end{itemize}
 
 Auf einige dieser Punkte und deren Bezug zu Pathcompare wird nun kurz eingangen.
 
-Das \textit{Signal-Slot} Konzept dient dazu Objekten, bestimmte Veränderungen an Objekten
-mitzuteilen, welche über diese Änderung informiert werden sollen.
-Es realisiert das Entwurfsmuster des \textit{Observer patterns}. 
-\textit{Signal-Slot} erspart es dem Programmierer einen Verweis auf das beobachtende
-Objekt, durch einen registrierenden Methodenaufruf beim aktualisierenden
-Objekt, zu hinterlegen. Stattdessen emittiert, im Falle einer mitzuteilenden
-Aktualisierung, das aktualisierende Object einen Methode, welche durch
-einen Qt Makro als \textit{signal} ausgezeichnet ist. Bei Beobachter Objekten,
-die auf dieses Signal reagieren sollen, wird dann eine als \textit{slot}
-deklarierte Methode selbständig aufgerufen, sofern die Objekte, durch einen
-Aufruf einer von Qt bereitgestellten, statischen Methode, verbunden wurden. 
-Dieses Konzept vereinfacht die Entwicklung wegen seiner Flexibilität deutlich, allerdings ist der durch
-Qt erzeugte Code, welcher bei Auflösung der Makros entsteht, aufblähend und
-dadurch theoretisch langsamer bei der Ausführung als eine klassische callback Implementierung.
-In der Praxis ist diese Verlangsamung aber unmerklich und wiegt nicht die
-Vorteile für den Entwickler auf. Deshalb wurde das Konzept auch bei der Entwicklung von
+Das \textit{Signal-Slot} Konzept dient dazu, bestimmte Veränderungen an
+Objekten, beobachtenden Objekten mitzuteilen.  Es realisiert also das
+Entwurfsmuster des \textit{Observer patterns}.  \textit{Signal-Slot} erspart es
+dem Programmierer einen Verweis auf das beobachtende Objekt, durch einen
+registrierenden Methodenaufruf beim aktualisierenden Objekt, zu hinterlegen.
+Das erleichtert den Entwicklungsprozess, da nicht mehr explizite Methoden zum
+Registrieren von Beobachtern definiert werden müssen.  Stattdessen emittiert,
+im Falle einer mitzuteilenden Aktualisierung, das aktualisierende Object ein
+sogenanntes Signal, welches durch einen Qt Makro als \textit{signal}
+ausgezeichnet ist. Bei Beobachter Objekten, die auf dieses Signal reagieren
+sollen, wird dann eine als \textit{slot} deklarierte Methode selbständig
+aufgerufen, sofern die Objekte, durch einen vorhergegangenen Aufruf, einer von
+Qt bereitgestellten, statischen connect Methode, verbunden wurden. Wie bereits
+angesprochen erhöht dieses Konzept, durch Wegfall der manuellen Implementierung
+von Beobachter Registriermethoden die Flexibilität für den Entwickler deutlich.
+Allerdings ist der durch Qt gekapselte Code, welcher durch Auflösung der Makros
+und Kompilierung entsteht, aufblähend und dadurch langsamer bei der Ausführung
+als eine direkte Implementierung mit Beobachter Registriermethoden. In der
+Praxis ist diese Verlangsamung aber unmerklich und wiegt nicht die Vorteile für
+den Entwickler auf. Deshalb wurde das Konzept auch bei der Entwicklung von
 \textit{Pathcompare} eingesetzt. 
 
 Im Zusammenhang mit dem Signal-Slot Konzepts wurde bereits erwähnt, dass Qt C++
-mit verschiedenen Makros erweitert. Diese Makros werden dabei nicht immer
-direkt in gültigen C++ Code übersetzt, sondern dienen als Annotationen. Dies
-hat Folgen für den Build Vorgang, denn die mit Annotationen versehenen Klassen
-müssen dann zuerst, mit dem von Qt bereitgestelltem \gls{MOC} übersetzt werden.
+um verschiedenen Makros erweitert. Diese Makros werden dabei nicht immer direkt
+in gültigen C++ Code übersetzt, sondern dienen als Annotationen. Dies hat
+Folgen für den Build Vorgang, denn die mit Annotationen versehenen Klassen
+müssen zuerst, mit dem von Qt bereitgestelltem, \gls{MOC} übersetzt werden.
+Durch den MOC wird aus den mit Annotationnen versehenem C++ Code, erneut C++
+Code erzeugt, der anschließend durch normale Compiler übersetzt werden kann.
 Standardmäßig wird in \textit{Qt} das Build Programm qmake verwendet, welches
 die nötigen Aufrufe des \gls{MOC} automatisch veranlasst. In Hinblick auf
-\textit{Pathcompare} war aber eine Integration in das von ROS
-genutzte Build verfahren cmake notwendig. Hierbei muss beachtet werden,
-dass cmake die Dateien welche einen \gls{MOC} Aufruf notwendig machen, in der
-derzeitigen Version, nicht selbständig erkennt. Diese müssen manuell in der
-\textit{CmakeLists.txt} deklariert werden. Die sonstige Einbindung
-\textit{Qt} spezifischer Libraries und deren Verlinkung mit der Applikation ist
-in cmake leicht möglich. Somit war die Verwenung von Qt in
-\textit{pathcompare} kein Hindernis für die Verwendung von cmake.
-Die Nutzung von cmake wird darüberhinaus, für große Projekte, von der 
-Qt Dokumentation selbst empfohlen.
-%TODO Quelle anbringen?
+\textit{Pathcompare} war aber eine Integration in das von ROS genutzte Build
+verfahren cmake notwendig. Hierbei muss beachtet werden, dass cmake die Dateien
+welche einen \gls{MOC} Aufruf notwendig machen, in der derzeitigen Version,
+nicht selbständig erkennt. Diese müssen manuell in der
+Buildkonfigurationsdatei, genannt \textit{CMakeLists.txt}, deklariert werden.
+Eine solche CMakeLists.txt Datei ist in jedem ROS package vorhanden und muss
+für diese angepasst werden. Die sonstige Einbindung \textit{Qt} spezifischer
+Libraries und deren Verlinkung mit der Applikation ist in cmake in wenigen
+Zeilen deklariert. Somit war insgesamt die Verwenung von Qt in
+\textit{Pathcompare} kein Hindernis für die Verwendung von cmake. Die Nutzung
+von cmake wird darüberhinaus, für große Projekte, von der Qt Dokumentation
+selbst empfohlen.
+%TODO Quelle Doku Eintrag anbringen?
 
 Neben dem \gls{MOC} existiert noch ein sogenannter \gls{UIC}. Dieser tritt im
-Zusammenhang mit dem \textit{QtDesigner} in Erscheinung. Der
-\textit{QtDesigner} ermöglicht es graphisch Qt GUIs zu erstellen. Dabei wird
-eine XML Datei vom Designer erstellt, welche den Aufbau der GUI abbildet.
+Zusammenhang mit dem graphischen GUI Designer in Erscheinung. Dieser wird
+\textit{QtDesigner} genannt. Beim Erstellen einer GUI mit diesem, wird eine
+spezielle XML Datei vom Designer erstellt, welche den Aufbau der GUI abbildet.
 Der UIC ist dann dafür verantwortlich diese Datei in C++ Klassen zu übersetzen.
 Auch hier muss cmake veranlasst werden zunächst für einen \gls{UIC} Aufruf
 entsprechender Dateien zu sorgen.
 
-\begin{itemize}
-  \item Warum braucht Pathcompare Qt?
-  \item GUI framework, native in C++ (auch Implementierungen für Java, Ruby,..)
-  \item bietet auch zahlreiche nicht GUI spezifische Funktionalität
-  \item cross platform
-  \item native UI rendering
-  \item UI designing with Qt Designer
-  \item bereichert C++ durch embedded Macros (z.B. signal\&slot) -> moc compiler
-  \item standard Buildsystem native qmake 
-  \item Unterstützung für cmake gegeben, für große Projekte sogar empfohlen
-\end{itemize}
-
+%TODO Quelle Plug-in Seite anbringen?
 
 \section{Design der Software}
-Der Hauptfokus beim Design der Pathcompare GUI lag darauf, einfache Benutzung und
-übersichtliche Darstellung der Informationen, für den Nutzer, zu gewährleisten.
-Außerdem sollte die Software leicht erweiterbar sein, um flexiblel auf neue
+Wie bereits im Abschnitt ``Aufgabenstellung'' erwähnt, lag der Hauptfokus beim
+Design der Pathcompare GUI darauf, einfache Benutzung und übersichtliche
+Darstellung der Informationen, für den Nutzer, zu gewährleisten.  Außerdem
+sollte die Software leicht erweiterbar sein, um flexiblel auf neue
 Testbedingungen oder geänderte Anforderungen reagieren zu können.
+Im folgenden Abschnitt wird beschrieben, wie Pathcompare realisiert wurde um
+diese Ziele umzusetzen.
 
 \subsection{Überblick Gesamtsystem}
 
@@ -270,7 +277,7 @@ Rahmen und Plug-ins sind dabei in zwei unterschiedlichen ROS packages
 organisiert. Das package pathcompare beinhaltet alle den Rahmen betreffenden
 Dateien und das package pathcompareplugins beinhaltet die Plug-ins.
 Die Aufteilung spiegelt sich auch in der GUI wider.
-Hierbei bildet das GUI des Rahmens die Grundlage für die Visualisierung von Plug-ins.
+Hierbei bildet die GUI des Rahmens die Grundlage für die Visualisierung von Plug-ins.
 Dabei wird den Plug-ins, nachdem sie geladen wurden, ein Platz innerhalb des
 Rahmens zugewiesen. Innerhalb dieses zugewiesenen Platzes können sie beliebige
 eigene UI Elemente laden und haben die volle Kontrolle über diese. Insgesamt
@@ -282,6 +289,7 @@ gehören die drei folgenden GUI Elemente zum Rahmen:
 \item Plug-in Tab-Fenster
 \end{itemize}
 
+Siehe dazu auch \autoref{fig:pathcompare}.
 Das Hauptfenster dient dabei als Grundlage für die Topic Übersicht und das
 Plug-in Tab-Fenster. Die Topic Übersicht und das Plug-in Tab-Fenster sind vertikal
 getrennt. Die Topic-Ansicht ist dabei ganz links angeordnet, siehe   .
@@ -295,12 +303,12 @@ getrennt. Die Topic-Ansicht ist dabei ganz links angeordnet, siehe   .
   \label{fig:pathcompare}
 \end{figure}
 
-Rechts neben der Topic Übersicht schließt unmittelbar das Plug-in
-Tab-Fenster an.
-Wird ein Plug-in geladen, wird in diesem Tab-Fenster ein neuer Tab angelegt. Die
-Fläche dieses Tabs wird diesem Plug-in dann zur Verfügung gestellt um sein UI
-darauf aufzubauen. Auf Details bezüglich des Ladens der Plug-ins und deren
-Funktionsweise wird in einem folgendem Abschnitt eingegangen. 
+Rechts neben der Topic Übersicht schließt unmittelbar das Plug-in Tab-Fenster
+an. Wird ein Plug-in geladen, wird in diesem Tab-Fenster ein neuer Tab
+angelegt. Die Fläche dieses Tabs wird diesem Plug-in dann zur Verfügung
+gestellt um sein UI darauf aufzubauen. Auf Details bezüglich des Ladens der
+Plug-ins und deren Funktionsweise wird in einem folgendem Abschnitt ``Main
+Compare'' eingegangen. 
 %TODO Referenz zu Plug-in Abschnitt
 
 Die Topic Übersicht zeigt die momentan im ROS verfügbaren Topics an. 
@@ -310,6 +318,8 @@ Gruppen werden dann kompakt im Topic Übersicht Fenster angezeigt und können do
 den Nutzer aufgeklappt werden um alle \textit{topics} eines Typs anzuzeigen.
 Dies ermöglicht es, nur solche Topics zu beobachten, die auch
 tatsächlich relevant sind für den Nutzer. 
+Siehe auch \autoref{fig:topics} für eine typische Ansicht der Topic Übersich mit aus- und
+eingeklappten Topic Gruppen.
 
 %TODO im Text auf topic übersicht Screenshot verweisen
 \begin{figure}[t]
@@ -332,7 +342,6 @@ liegt nicht im Zentrum des Interesses. Darüber hinaus ist die Topic Übersicht
 sehr kompakt gestaltet und der horizontale Platzbedarf fällt gering aus.
 
 
-
 \subsection{Anbindung an ROS}
 
 Die Hauptaufgabe des Rahmens ist es eine Anbindung an ROS zu gewährleisten.
@@ -348,21 +357,10 @@ beispielsweise, das eintreffen neuer \textit{messages} von abonnierten
 Zugriff der Plug-ins auf ROS spezifische Funktionalität wird komplett über den
 \textit{ROSManager} gekapselt. Diese Zentralisierung ist deshalb nötig, umd den Zugriff
 der verschiedenen Plug-ins, auf ROS, zu koordinieren. 
-Die wichtigste Methode die durch den ROSManager dabei den Plug-ins zur
+Die wichtigste Methode \textit{subscribeToTopic()}, die durch den ROSManager den Plug-ins zur
 Verfügung steht, ermöglicht es eine als Parameter übergebene \textit{topic} zu
 abbonieren. 
-Diese Methode ist wie folgt definiert:
 
-\begin{figure}[t]
-  \begin{center}
-    \fbox{\includegraphics{./graphics/rosmanager}}
-  \end{center}
-  \caption{Anbindung an ROS durch ROSManager}
-  \label{fig:rosmanager}
-\end{figure}
-
-%TODO referece figure message / topic handling gesamtübersicht in text
-%TODO add method definition of ROSManager subscribeToTopic(..)
 
 Beim Abonnieren einer \textit{topic} wird in ROS typischerweise direkt eine
 Methode als Callback angegeben, welche eingehende \textit{messages} bearbeitet.
@@ -379,25 +377,46 @@ Schwierigkeitn denen bei der Entwicklung begnet werden musste:
 Gelöst wurde das Problem durch die Verwendung von
 \textit{ros::message\_filter::cache}. Objekten dieser Klasse wird bei der
 Initialisierung eine \textit{topic} zugewiesen. Empfangene \textit{messages}
-dieser \textit{topic} werden in einem Ringpuffer mit einstellbarer größe Zwischengespeichert.
-Außerdem erlaubt diese Klasse die Registrierung beliebig vieler Callbacks.
-Der \textit{ROSManager} sorgt also dafür, dass für jede von den Plug-ins
-benötigte \textit{topic} genau ein \textit{ros::message\_filter::cache} Objekt
-existiert. Plug-ins erhalten dann einen Verweis auf dieses Objekt und können
-ihren Callback registrieren.
+dieser \textit{topic} werden in einem Ringpuffer mit einstellbarer größe
+Zwischengespeichert.  Außerdem erlaubt diese Klasse die Registrierung beliebig
+vieler Callbacks.  Der \textit{ROSManager} sorgt also dafür, dass für jede von
+den Plug-ins benötigte \textit{topic} genau ein
+\textit{ros::message\_filter::cache} Objekt existiert. Plug-ins erhalten dann
+einen Verweis auf dieses Objekt und können ihren Callback registrieren. Siehe
+dazu auch \autoref{fig:rosmanager}.
+\autoref{fig:rosmanager} ist ein Beispiel für eine Ausführung von Pathcompare
+in Verbindung mit drei Plug-ins. Über das ROS werden die drei topics topic\_x,
+topic\_y und topic\_z angeboten. Durch einen Aufruf von der subscribe Methode
+des ROSManager möchte Plug-in 1 die topic x abbonieren. Der ROSManager legt aus
+diesem Grund einen cache an und gibt an das Plug-in 1 einen Verweis darauf
+zurück. Plug-in 2 möchte dieselbe topic abbonieren und erhält ebenfalls einen
+Verweis auf denselben cache. Plug-in 3 verlangt jedoch die topic\_y zu
+abbonieren und es erfolgt das anlegen eines neuen caches. 
 
-Weitere Methoden die der ROSMaster den Plug-ins zur Verfügung stellt, werden in einem
-späteren Abschnitt aufgezeigt.
+\autoref{fig:rosmanager}.
+
+\begin{figure}[t]
+  \begin{center}
+    \fbox{\includegraphics{./graphics/rosmanager}}
+  \end{center}
+  \caption{Anbindung an ROS durch ROSManager}
+  \label{fig:rosmanager}
+\end{figure}
+
+Weitere Methoden die der ROSMaster den Plug-ins zur Verfügung stellt, dienen
+beispielsweise dazu, den Plug-ins mitzuteilen, welche topics momentan im ROS
+verfügbar sind. Für eine komplette Übersicht sei an dieser Stelle auch auf die
+Klassendefinition rosmanager.h, die im package pathcompare zu finden ist,
+verwiesen.
 
 Die Klasse \textit{ROSManager} sorgt außerdem dafür, dass die Topic Übersicht
 regelmäßig aufgefrischt wird. Es wird also dem Nutzer ersichtlich, sollten neue
-\textit{topics} erscheinen oder wenn diese nicht mehr verfügbar sind.
-Da die ROS \gls{API} keinen event service anbietet um Beobachter zu benachrichtigen,
+\textit{topics} erscheinen oder wenn diese nicht mehr verfügbar sind.  Da die
+ROS \gls{API} keinen event service anbietet um Beobachter zu benachrichtigen,
 falls sich der Status von \textit{topics} ändert, stellt der
 \textit{ROSManager} sekündlich eine Anfrage an den \textit{master} nach dem
 aktuellen Stand der topics.  Dies ist gesteuert über einen QTimer in Verbindung
 mit dem Signal-Slot Konzept.
-
 
 \subsection{Laden von Plugins}
 Das Einbinden von Plugins in den Rahmen steuert die Klasse
@@ -407,15 +426,14 @@ Dateien betrachtet. Handelt es sich um eine für \textit{Pathcompare} gültige
 Plug-in Datei, fragt der \textit{PluginLoader} zunächst den Namen des Plug-ins
 über eine im Plug-in Interface spezifizierte Methode \textit{getName()} ab.
 Anschließend wird im Plug-in Tab Fenster ein neuer Tab angelegt. Dabei wird im
-Tab Reiter der erfragte Name des Plug-ins eingetragen. Dadurch sind in der GUI die Plug-ins für den
-Nutzer leicht zu unterscheiden und können schnell angewählt werden.
-Der Plug-in Ordner steht während der Laufzeit von \textit{Pathcompare}
-unter der Beobachtung des \textit{PluginLoaders}. 
-Obwohl \textit{Pathcompare} bereits gestartet wurde, können also Plug-ins in das Plug-in
-Verzeichnis eingefügt werden und diese werden geladen. Dies bietet mehr Flexibilität für den
-Nutzer und Entwickler, da kein Neustart der Rahmen Anwendung sowie der ausgeführten
-\textit{Plug-ins} erforderlich ist.
-
+Tab Reiter der erfragte Name des Plug-ins eingetragen. Dadurch sind in der GUI
+die Plug-ins für den Nutzer leicht zu unterscheiden und können schnell
+angewählt werden.  Der Plug-in Ordner steht während der Laufzeit von
+\textit{Pathcompare} unter der Beobachtung des \textit{PluginLoaders}.  Obwohl
+\textit{Pathcompare} bereits gestartet wurde, können also Plug-ins in das
+Plug-in Verzeichnis eingefügt werden und diese werden geladen. Dies bietet mehr
+Flexibilität für den Nutzer und Entwickler, da kein Neustart der Rahmen
+Anwendung sowie der ausgeführten \textit{Plug-ins} erforderlich ist.
 
 \subsection{Main Compare Plug-in}
 \label{sub:maincompare}
@@ -587,9 +605,16 @@ message\_filter::cache registriert wird. Kommt eine neue message an, wird die
 callback Methode aufgerufen und aus den Werten der Path message ein neues
 TopicPath Objekt erstellt. Anschließend werden, anhand des neuen TopicPaths,
 alle nötigen Berechnungen erneut durchgeführt und die Results Tabelle
-aktualisiert.
+aktualisiert. Die Beziehung der Klassen Position, TopicPath und
+TopicPathManager werden in \autoref{fig:topicpathrelated} verdeutlicht.
 
-%TODO Klassendiagramm bezüglich der Klassen Position, TopicPath, TopicPathManager
+\begin{figure}[t]
+  \begin{center}
+    \fbox{\includegraphics{./graphics/topicpathrelated}}
+  \end{center}
+  \caption{In Main Compare verwendete Klassen zum verarbeiten von Pfaden}
+  \label{fig:topicpathrelated}
+\end{figure}
 
 Anhand der abstrakten Modellierung $M$ eines Pfades, werden im Folgenden, die von
 Main Compare ausgeführten Berechnungen erläutert. In der konkreten
