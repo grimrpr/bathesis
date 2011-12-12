@@ -294,7 +294,6 @@ Das Hauptfenster dient dabei als Grundlage für die Topic Übersicht und das
 Plug-in Tab-Fenster. Die Topic Übersicht und das Plug-in Tab-Fenster sind vertikal
 getrennt. Die Topic-Ansicht ist dabei ganz links angeordnet, siehe   .
 
-%TODO Gesamtansicht im Text referenzieren
 \begin{figure}[t]
   \begin{center}
     \fbox{\includegraphics{./graphics/screenshotpathcompare4}}
@@ -308,8 +307,7 @@ an. Wird ein Plug-in geladen, wird in diesem Tab-Fenster ein neuer Tab
 angelegt. Die Fläche dieses Tabs wird diesem Plug-in dann zur Verfügung
 gestellt um sein UI darauf aufzubauen. Auf Details bezüglich des Ladens der
 Plug-ins und deren Funktionsweise wird in einem folgendem Abschnitt ``Main
-Compare'' eingegangen. 
-%TODO Referenz zu Plug-in Abschnitt
+Compare Plug-in'' eingegangen. 
 
 Die Topic Übersicht zeigt die momentan im ROS verfügbaren Topics an. 
 Um die Übersicht auf die Topics zu strukturieren ist sie derart
@@ -670,11 +668,10 @@ zweier Punkte, mit demselben Zeitstempel, bestimmen.
 Das Problem bei dieser Methode ist jedoch, dass das Referenzsystem und die
 einzelnen Sensorknoten unabhängig voneinander sind und dadurch Lokalisierungen
 nicht immer zum selben Zeitpunkt oder mit einer anderen Frequenz durchführen 
-können. Um dies zu verhindern müsste man wie in Abb. gezeigt einen zentralen
+können. Um dies zu verhindern müsste man einen zentralen
 Taktgeber in das System integrieren, der durch ausgesendete Impulse, zum
 Beispiel in der Form einer ROS message, den Komponenten vorschreibt,
 wann eine Lokalisierung durchgeführt werden soll.
-%TODO bild test mit Tickgeber
 Die Einführung eines solchen Taktgebers verkompliziert jedoch die
 Testausführung und setzt bei allen am Test beteiligten Komponenten voraus, dass
 deren Software auf diesen Mechanismus reagiert. Zudem ist man während des Tests
@@ -687,8 +684,18 @@ beliebigen Zeitpunkten und mit beliebiger Frequenz durchzuführen. Die einzige
 Voraussetzung ist dabei, dass die Uhren der Komponenten, mit einem gewissen
 tollerierbaren Fehler, synchronisiert werden. Dies sichert, dass die Zeitstempel der
 Lokalisierungen zuverlässig vergleichbar sind. Der Abstand wird wie folgt
-ermittelt, siehe dazu auch Abb. . Für jeden Punkt im zu vergleichenden Pfad $A$
+ermittelt, siehe dazu auch \autoref{fig:distancetoref} . Für jeden Punkt im zu vergleichenden Pfad $A$
+
 %TODO bild variante ohne tick
+
+\begin{figure}[t]
+  \begin{center}
+    \fbox{\includegraphics{./graphics/distancetoref}}
+  \end{center}
+  \caption{Distanzbestimmung eines Punktes zum Referenzpfad}
+  \label{fig:distancetoref}
+\end{figure}
+
 wird der Abstand zum Refernzpfad $R$ bestimmt. Dazu wird der jeweilige
 Zeitstempel $z_a$ eines Punktes $p_a$ aus A einem passenden
 Zeitstempelintervall zweier aufeinanderfolgender Punkte $p_{r2}$ , $p_{r1}$ aus $R$ zugeordnet, sodass
@@ -703,8 +710,7 @@ Lot auf die von $p_{r1}$ und $p_{r2}$ bestimmte Gerade ermittelt. Fällt das Lot
 dabei zwischen $p_{r1}$ und $p_{r2}$ auf die Gerade wird der Abstand vom
 Lotpunkt zu $p_a$ errechnet. Fällt er jedoch außerhalb dieses Intervalls muss
 der Abstand, je nach Lage des Lotpunkts, entweder zu $p_{r1}$ oder $p_{r2}$
-bestimmt werden. Siehe dazu auch Abb. .
-%TODO bild abstandsbestimmung
+bestimmt werden. 
 
 Charakteristisch bei dieser Art der Abstandsbestimmung ist, dass beim
 Referenzpfad zwischen zwei Lokalisierungen, durch das Geradensegment, die
