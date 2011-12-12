@@ -4,34 +4,38 @@
 Referenzsystems, welches in der Lage ist sich mobil indoor zu bewegen und dabei
 möglichst genau zu lokalisieren.  Der Zweck dieses Referenzsystems ist es,
 Lokalisierungen als Referenz zur Verfügung zu stellen, um die Genauigkeit von
-Lokalisierungen mobiler Sensorknoten, die in einem \textit{Wireless Sensor
-Networks} \gls{WSN} organisiert sind, zu ermitteln. Das Referenzsystem ist
-durch einen Roboter realisiert, welcher autonom vorgegebene Wegpunkte in einer
-Karte abfährt. Bei einer solchen Fahrt zeichnet der Roboter sowie an ihm
-befestigte Sensorknoten einen Pfad durch regelmäßige Lokalisierung auf. In
-dieser Arbeit geht es um die Implementierung eines Analysewerkzeugs namens
-\textit{Pathcompare}, welches ermöglicht, die Pfaddaten zusammenzuführen, für
-den Tester aufzuwerten und zu visualisieren. Neben mittleren Abstand (Median)
-zum gewählten Referenzpfad werden Parameter wie Pfadlänge, Anzahl der
-Pfadpunkte, Stichprobenvarianz und eine Liste der größten Abweichungen angezeigt.  Alle Daten
-können als \gls{CSV} exportiert werden.  \textit{Pathcompare} ist in das
-\gls{ROS} integriert und so entwickelt dass es über Plug-ins erweitert und
-angepasst werden kann. 
+Lokalisierungen mobiler Sensorknoten, die in einem 
+\gls{WSN} organisiert sind, zu ermitteln. 
+
+Diese Arbeit steht in Kontext zum Aufbau eines Referenzsystems zur indoor
+Lokalisierung. Dieses Referenzsystem soll es ermöglichen die Genauigkeit von
+indoor Lokalisierungen, durchgeführt mit mobilen Sensorknoten eines \gls{WSN},
+zu ermitteln. Die Grundlage des Referenzsystems ist dabei ein mobiler Roboter,
+welcher autonom, vorgegebene Wegpunkte in einer Karte abfährt. Bei einer solchen
+Fahrt zeichnet der Roboter sowie an ihm befestigte Sensorknoten einen Pfad
+durch regelmäßige Lokalisierung auf. Aufbauend darauf, geht es im Rahmen dieser
+Arbeit um die Implementierung eines Analysewerkzeugs namens
+\textit{Pathcompare}, welches ermöglicht, die dabei entstandenen Pfaddaten
+zusammenzuführen, für den Tester aufzuwerten und zu visualisieren. Neben
+mittleren Abstand zum gewählten Referenzpfad werden Parameter wie
+Pfadlänge, Anzahl der Pfadpunkte, empirische Varianz und eine Liste der größten
+Abweichungen angezeigt. Alle Daten können als \gls{CSV} exportiert werden.
+\textit{Pathcompare} ist in das \gls{ROS} integriert und so entwickelt, dass es
+über Plug-ins erweitert und angepasst werden kann. 
 
 
 % always write an english abstract in addition to a german one
-\section*{Abstract} This thesis is associated with the development of a
-referece system that has the ability to localize itself. The reason for the
-development of such a system is to provide localization data. This data is used
-as reference data for localization data of mobile sensor nodes organized in a
-\textit{Wireless Sensor Network} \gls{WSN} inorder to evaluate the precision of
-their localization measurements. Such a reference system was build in the form
-of a mobile robot that is able to autonomously navigate to given waypoints.
+\section*{Abstract} This thesis is associated with the development of a indoor
+localization reference system. The aim of this reference system is to evaluate
+the precision of mobile sensor node localization data. The sensor nodes are
+organized in a wireless sensor network. The basis of the reference system is a
+mobile robot, that is able to autonmously navigate to given waypoints in a map.
 While moving, the robot and sensor nodes mounted on it, generate path data by
 continously localizing. This work is about the creation of an analysing tool
 named \textit{Pathcompare} that is used to merge the path data of different
 sources and visualize them for a tester. The software shows the median distance
 of a path to the given reference path, the overall pathlength, total number of
-points per path and also a list of the greates distances to the reference path.
-All results can be exported as \gls{CSV}. \textit{Pathcompare} is integrated
-into the \gls{ROS} and can be extended via a Plug-in mechanism.
+points per path, variance and also a list of the greates distances to the
+reference path.  All results can be exported in a \gls{CSV} file.
+\textit{Pathcompare} is integrated into the \gls{ROS} and can be extended via a
+Plug-in mechanism.

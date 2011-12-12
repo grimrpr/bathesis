@@ -686,8 +686,6 @@ tollerierbaren Fehler, synchronisiert werden. Dies sichert, dass die Zeitstempel
 Lokalisierungen zuverlässig vergleichbar sind. Der Abstand wird wie folgt
 ermittelt, siehe dazu auch \autoref{fig:distancetoref} . Für jeden Punkt im zu vergleichenden Pfad $A$
 
-%TODO bild variante ohne tick
-
 \begin{figure}[t]
   \begin{center}
     \fbox{\includegraphics{./graphics/distancetoref}}
@@ -753,24 +751,25 @@ erstellen, im wesentlichen zwei Schritte ausgeführt werde, dies sind:
   \item Implementierung des Interfaces durch Plug-in
 \end{enumerate}
 
-Um eine Anwendung durch Plug-ins erweiterbar zu machen ist also zunächst erforderlich ein
-Interface zu definieren. Dieses Interface legt fest, welche Methoden durch ein
-Plug-in zu implementieren sind. Das Interface hat dabei
-die Form einer Klassendefinition mit nur rein virtuellen Funktionen. Zusätzlich
+Um eine Anwendung durch Plug-ins erweiterbar zu machen, ist also zunächst
+erforderlich ein Interface zu definieren. Dieses Interface legt fest, welche
+Methoden durch ein Plug-in zu implementieren sind. Das Interface hat dabei die
+Form einer Klassendefinition mit nur rein virtuellen Funktionen. Zusätzlich
 wird diese Klassendefinition durch Qt Makros ergänzt, um es als Interface zu
 markieren. In Pathcompare ist dieses Interface vorgegeben und trägt den langen
 Namen \textit{ComparatorPluginFactoryInterface}. Wie die Implementierung dieses
-Interfaces erfolgt, wird nun anhand eines vorhandenen Plug-ins für Pathcompare erläutert.
-Dieses Plug-in trägt den Namen Camera View. In der derzeitigen Version von
-Pathcompare wird es, ebenso wie Main Compare, beim Starten der Anwendung geladen.
-Es dient dem Nutzer dazu ROS topics des Typs sensor\_msgs/Image zu
-visualisieren. Dieser Typ von Topic wird beispielsweise innerhalb von ROS
-genutzt um Kamerafeeds der Kinect zur Verfügung zu stellen. Camera View könnte also
-bei einer Fahrt des TurtleBots eingesetzt werden um dem Tester ein Bild der
-aktuellen Umgebung des Roboters zu vermitteln. Die Gestaltung der GUI dieses
-Plug-ins fällt einfach aus. Der Nutzer kann mit einer ComboBox eine topic
-auswählen. Nach der Auswahl, werden die empfangenden Bilder, der gewählten Image
-topic, eingeblendet. 
+Interfaces erfolgt, wird nun anhand eines vorhandenen Plug-ins für Pathcompare
+erläutert.  Dieses Plug-in trägt den Namen Camera View. In der derzeitigen
+Version von Pathcompare wird es, ebenso wie Main Compare, beim Starten der
+Anwendung geladen.  Es dient dem Nutzer dazu ROS topics des Typs
+sensor\_msgs/Image zu visualisieren. Dieser Typ von Topic wird beispielsweise
+innerhalb von ROS genutzt um Kamerafeeds der Kinect zur Verfügung zu stellen.
+Camera View könnte also bei einer Fahrt des TurtleBots eingesetzt werden um dem
+Tester ein Bild der aktuellen Umgebung des Roboters zu vermitteln. Die
+Gestaltung der GUI dieses Plug-ins fällt einfach aus. Siehe diesbezüglich auch
+\autoref{fig:cameraview}. Der Nutzer kann mit einer
+ComboBox eine topic des Typs sensor\_msgs/Image auswählen. Nach der Auswahl, werden die empfangenden
+Bilder, der gewählten Image topic, eingeblendet. 
 
 \begin{figure}[t]
   \begin{center}
@@ -780,7 +779,7 @@ topic, eingeblendet.
   \label{fig:cameraview}
 \end{figure}
 
-Wie zuvor beschrieben muss jedes Pathcompare Plugin das Interface
+Wie zuvor beschrieben, muss jedes Pathcompare Plugin das Interface
 \textit{ComparatorPluginFactoryInterface} implementieren, so auch Camera View.
 
 Dieses Interface beinhaltet zwei Methoden, siehe dazu auch
@@ -808,8 +807,8 @@ typedef boost::shared_ptr<ComparatorPlugin> ComparatorPluginPtr;
 
 Es handelt sich also um einen Verweis auf ein Objekt der Klasse
 ComparatorPlugin. Diese Klasse ist der Basistyp, für das in der Factory Methode
-dynamisch erzeugte Objekt. In Camera View ist die Factory Methode wie folgt
-implementiert worden, siehe \autoref{lst:create}:
+dynamisch erzeugte Objekt. In Camera View ist die createComparatorPlugin()
+Factory Methode wie folgt implementiert worden, siehe \autoref{lst:create}:
 
  \begin{figure}[t]
    \begin{center}
@@ -827,12 +826,13 @@ ComparatorPluginPtr PathcompareMainFactoryPlugin::createComparatorPlugin(ROSMana
 }
 \end{lstlisting}
 
-Es wird hierin ein Objekt des Typs CameraView angelegt, welches den Basistyp
-ComparatorPlugin besitzt. Im Konstruktor erhält es Verweise auf den ROSManager,
-welcher benötigt wird um ROS spezifische Aktionen durchzuführen. Als zweites
-Konstruktorargument wird die Zeichenfläche für die Camera View GUI übergeben.
-Am Ende der Methode wird das fertig angelegte Objekt zurückgegeben und steht
-damit Pathcompare zur Verfügung. 
+Es wird hier ein Objekt des Typs CameraView angelegt, welches den Basistyp
+ComparatorPlugin besitzt, siehe dazu auch \autoref{cameraviewcomparator}. Im
+Konstruktor erhält es Verweise auf den ROSManager, welcher benötigt wird um ROS
+spezifische Aktionen durchzuführen. Als zweites Konstruktorargument wird die
+Zeichenfläche für die Camera View GUI übergeben.  Am Ende der Methode wird das
+fertig angelegte Objekt zurückgegeben und steht damit Pathcompare zur
+Verfügung. 
 
 Die zweite Methode im Plug-in Interface, getName() liefert lediglich den Namen
 des Plug-ins zurück und wird in Pathcompare durch die Klasse PluginLoader
@@ -841,6 +841,6 @@ genutzt.
 Zusammenfassend kann man also sagen, dass die eigenlichen Pathcompare Plug-in Interface
 Methoden ohne großen Aufwandt zu implementieren sind. Ein vollständiges
 Referenzbeispiel zur Implementierung neuer Plug-ins ist durch Camera View gegeben.
-Zu finden sind dabei alle relevanten Code- und Builddateien im Ordner
+Zu finden sind dabei alle relevanten Code- und Builddateien im package 
 pathcompareplugins/cameraview.
 
