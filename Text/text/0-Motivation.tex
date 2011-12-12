@@ -7,17 +7,18 @@
 %==============================================================================
 
 Systeme zur Lokalisierung werden für zahlreiche Zwecke genutzt und deren
-Bedeutung wächst parallel zur Verbreitung immer neuer sogenannter \gls{LBS}.
+Bedeutung wächst parallel zur Verbreitung immer neuer sogenannter Location
+Based Services.
 Dies sind Dienste, die dem Nutzer auf Grundlage von Positionsdaten
 Informationen generieren können. Für Anwendungen im Freien haben sich
 satellitengestützte Lokalisierungssysteme, welche theoretisch hohe Genauigkeit
 bieten können, etabliert. Als bekanntes Beispiel sei hier das
-\textit{NAVSTAR-GPS} genannt, welches zivil und militärisch genutzt wird.
-Allerdings ergeben sich auch Anwendungsumgebungen, in denen derartige Systeme
-gar nicht, bzw. nur ungenau funktionieren oder bewusst z.B. aus Kostengründen
-gemieden werden. Dies sind typischerweise Umgebungen in denen die
+\textit{GPS} genannt, welches zivil und militärisch genutzt wird.
+Allerdings ergeben sich auch Anwendungsumgebungen in denen derartige Systeme
+gar nicht bzw. nur ungenau funktionieren oder z.B. aus Kostengründen bewusst
+gemieden werden. Dies sind typischerweise Umgebungen, in denen die
 Satellitensignale zu stark gedämpft werden oder vor allem durch Reflexionen
-bedingte Laufzeitverschiebungen, sich negativ auf die Genauigkeit auswirken,
+bedingte Laufzeitverschiebungen sich negativ auf die Genauigkeit auswirken,
 wie z.B.: 
 
 \begin{itemize} 
@@ -43,7 +44,7 @@ oder kostenkritische Lokalisierungsszenarien attraktriv wie beispielsweise für:
 
 So entstand vorausgehende Forschung der Arbeitsgruppe in diesem Bereich u.a. in
 Kooperation mit der Berliner Feuerwehr. Die Sensorknoten des WSN sind in mobile
-Knoten und Ankerknoten aufgeteilt. Das Ziel ist es mit einem mobilen Knoten
+Knoten und Ankerknoten aufgeteilt. Das Ziel ist es, mit einem mobilen Knoten
 eine Lokalisierung durchzuführen. Die Grundlage dafür bieten die Ankerknoten,
 deren Positionen bekannt sind. Die mobilen Knoten ermitteln dann direkt mittels
 der Ankerknoten oder indirekt über andere mobile Knoten ihre Position. Die
@@ -76,9 +77,9 @@ erweitert werden.
 Die Arbeit ist in mehrere Abschnitte gegliedert, die unterschiedliche Aspekte
 von Pathcompare erläutern. Zunächst wird im unmittelbar folgenden Abschnitt
 ``Aufgabenstellung'' die Zielsetzung von Pathcompare und der gewählte
-Lösungsansatz aufgezeigt. Dazu wird auch auf die Gesamtstruktur des
+Lösungsansatz aufgezeigt. Dazu wird auf die Gesamtstruktur des
 Referenzsystems eingegangen und der mobile Roboter genauer beleuchtet.  Danach
-folgt der Abschnitt ``Implementierung''. Hier wird in Detail auf Pathcompares
+folgt der Abschnitt ``Implementierung''. Hier wird im Detail auf Pathcompares
 Bestandteile eingegangen. Dabei werden deren Funktionsweisen und
 Designentscheidungen betrachtet. Ein wesentliches Element dieses Abschnitts ist
 außerdem die Betrachtung von Pathcompares Plug-in Konzept und den
