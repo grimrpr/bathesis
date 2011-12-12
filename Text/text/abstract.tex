@@ -1,14 +1,9 @@
 \chapter*{\abstractname}
-% delete german abstract when writing in english
-\section*{Zusammenfassung} Diese Arbeit steht im Kontext zum Aufbaus eines
-Referenzsystems, welches in der Lage ist sich mobil indoor zu bewegen und dabei
-möglichst genau zu lokalisieren.  Der Zweck dieses Referenzsystems ist es,
-Lokalisierungen als Referenz zur Verfügung zu stellen, um die Genauigkeit von
-Lokalisierungen mobiler Sensorknoten, die in einem 
-\gls{WSN} organisiert sind, zu ermitteln. 
+
+\section*{Zusammenfassung}
 
 Diese Arbeit steht in Kontext zum Aufbau eines Referenzsystems zur indoor
-Lokalisierung. Dieses Referenzsystem soll es ermöglichen die Genauigkeit von
+Lokalisierung. Das Referenzsystem soll es ermöglichen die Genauigkeit von
 indoor Lokalisierungen, durchgeführt mit mobilen Sensorknoten eines \gls{WSN},
 zu ermitteln. Die Grundlage des Referenzsystems ist dabei ein mobiler Roboter,
 welcher autonom, vorgegebene Wegpunkte in einer Karte abfährt. Bei einer solchen
@@ -24,18 +19,19 @@ Abweichungen angezeigt. Alle Daten können als \gls{CSV} exportiert werden.
 über Plug-ins erweitert und angepasst werden kann. 
 
 
-% always write an english abstract in addition to a german one
-\section*{Abstract} This thesis is associated with the development of a indoor
+
+\section*{Abstract} 
+This thesis is associated with the development of a indoor
 localization reference system. The aim of this reference system is to evaluate
 the precision of mobile sensor node localization data. The sensor nodes are
 organized in a wireless sensor network. The basis of the reference system is a
-mobile robot, that is able to autonmously navigate to given waypoints in a map.
+mobile robot, that is able to autonomously navigate to given waypoints in a map.
 While moving, the robot and sensor nodes mounted on it, generate path data by
-continously localizing. This work is about the creation of an analysing tool
+continuously localizing. This work is about the creation of an analysing tool
 named \textit{Pathcompare} that is used to merge the path data of different
 sources and visualize them for a tester. The software shows the median distance
 of a path to the given reference path, the overall pathlength, total number of
-points per path, variance and also a list of the greates distances to the
+points per path, variance and also a list of the greatest distances to the
 reference path.  All results can be exported in a \gls{CSV} file.
 \textit{Pathcompare} is integrated into the \gls{ROS} and can be extended via a
 Plug-in mechanism.
