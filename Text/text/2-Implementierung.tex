@@ -13,8 +13,8 @@ Obwohl der Name zunächst anderes vermuten lässt, ist ROS kein
 Betriebssystem im klassischem Sinne. Es ist vielmehr eine Sammlung von
 Anwendungen, welche auf ein Betriebssystem angewiesen sind, um ausgeführt werden
 zu können. ROS bietet aber Funktionalitäten, die ,abstrahiert betrachtet,
-Betriebsystemfunktionen ähneln. Charakteristisch ist hierbei ROS Fähigkeit
-lokal- oder nichtlokal ausgeführte Programme zu Verbinden und eine
+Betriebssystemfunktionen ähneln. Charakteristisch ist hierbei ROS Fähigkeit
+lokal oder nichtlokal ausgeführte Programme zu Verbinden und eine
 strukturierte Kommunikation zwischen diesen zu ermöglichen. Die grundlegenden
 Ansätze, die ROS verfolgt sind:
 
@@ -44,7 +44,7 @@ sollen sich in der Implementierung befinden.
 
 ROS ist darüberhinaus frei verfügbar und Open-Source. Man kann beliebige
 Programme, als Module zur Erweiterung und Nutzung von ROS hinzufügen, wie
-es auch im Rahmen des Referenzsystems geschehen ist. Bei allgemeinem Nutzem und
+es auch im Rahmen des Referenzsystems geschehen ist. Bei allgemeinem Nutzen und
 gegebener Pflege der Software, besteht die Möglichkeit, dass diese offiziell zu
 ROS hinzugefügt werden.
 
@@ -73,7 +73,8 @@ ausgeführt werden, d.h. der \textit{master} kann sich auch auf einem anderen
 Rechner als der \textit{node} befinden, solange eine http Verbindung zwischen
 beiden hergestellt werden kann. Denn das Anmelden des \textit{nodes} beim
 master erfolgt über einen \gls{XML-RPC}, getragen vom http. Für den 
-Softwareentwickler auf Anwendungsebene ist diese Kommunikation zur Anmeldung allerding
+Softwareentwickler auf Anwendungsebene ist diese Kommunikation zur Anmeldung
+allerdings
 vollständig durch die ROS API gekapselt und er muss sich in dieser Hinsicht
 nicht explizit um Verbindungsaufbau oder Nachrichtenaustausch kümmern. Wie in
 der \autoref{fig:roscomponents} dargestellt, können auch die nodes
@@ -85,18 +86,18 @@ Fähigkeit von ROS lässt sich beispielsweise vorteilhaft ausnutzen durch:
   \item Zusammenführenung von an unterschiedlichen Stellen gewonnener Daten.
 \end{itemize}
 
-So muss beispielsweise ein mobiler Roboter Bilderkennungs Aufgaben nicht selbst
+So muss beispielsweise ein mobiler Roboter Bilderkennungsaufgaben nicht selbst
 ausführen, sondern kann diese an einen \textit{node} weiterleiten der auf einem
 Rechencluster ausgeführt wird. Der zweite Punkt, also das Zusammenführen von
 Daten ist auch besonders im Bezug auf diese Arbeit wichtig, da Pfaddaten des
 Roboters und der zu testenden Sensorknoten für \textit{Pathcompare} verfügbar
 gemacht werden müssen.  Die Kommunikation zwischen nodes erfolgt über
 sogenannte \textit{messages}, diese enthalten die serialisierte Form der zu
-übertragenden Daten. ROS bietet in seinen Kernpakten bereits zahlreiche
+übertragenden Daten. ROS bietet in seinen Kernpaketen bereits zahlreiche
 Definitionen für unterschiedliche \textit{message} Typen, aber es ist auch
 möglich eigene zu generieren und dies wird von zahlreichen Paketen getan, um
 Daten maßgeschneidert übertragen zu können. Einmal definierte \textit{message}
-Typen können wiederum rekusiv in anderen \textit{message} Typen verwendet
+Typen können wiederum rekursiv in anderen \textit{message} Typen verwendet
 werden. Ein Beispiel für eine message ist in \autoref{lst:transform}
 dargestellt. Dieser Typ von message ist standardmäßig in ROS definiert.
 Sie besteht wie erkennbar aus den zwei Typen \textit{Vector3} und
@@ -125,17 +126,17 @@ Identifikation innerhalb des ROS. Eine weitere festgelegte
 Eigenschaft einer \textit{topic} ist der Typ, der über sie versendeten
 \textit{messages}. \textit{Nodes} welche \textit{messages} einer
 \textit{topic} empfangen sollen, müssen diese \textit{topic} dann beim
-\textit{master} abbonieren. Der \textit{master} vermittelt dann eine
+\textit{master} abonnieren. Der \textit{master} vermittelt dann eine
 peer-to-peer Verbindung zwischen dem Anbieter node der topic und dem
-Abbonenten. Generell gilt dabei, dass topics einen unidirektionalen
+Abonnenten. Generell gilt dabei, dass topics einen unidirektionalen
 Kommunikationsweg darstellen, denn es werden nur vom Anbieter aus messages
-gesendet, der oder die Abbonenten der topic sind reine Empfänger. 
+gesendet, der oder die Abonnenten der topic sind reine Empfänger. 
 In programmatischer Hinsicht wird beim Empfang neuer Nachrichten innerhalb des
 \textit{nodes} eine festgelegte callback Methode aufgerufen, um die
 \textit{messages} zu bearbeiten. Treffen dabei Nachrichten mit einer höheren
 Frequenz ein, als abgearbeitet werden können, so kommt es irgendwann zu
-Verlusten, wenn die Größe der \textit{message queue} beim Empfänger überschritten
-wird. Die größe dieser queue kann jedoch durch die ROS API gesteuert werden.  
+Verlusten, wenn die Größe der \textit{message} Queue beim Empfänger überschritten
+wird. Diese Queue hält eingehende messages fest. Die Größe der Queue kann jedoch durch die ROS API gesteuert werden.  
 
 Zwei weitere wichtige Begriffe in ROS betreffen die Organisierung der
 Dateien die zu den einzelnen tools gehören. Dies sind:
@@ -150,13 +151,13 @@ eines tools bzw. \textit{nodes}.  In ROS sind für packages bestimmte
 Ordnerstrukturen und Dateien festgelegt sodass mithilfe der von ROS
 mitgebrachten tools \textit{packages} leicht gebaut, gesucht und gestartet
 werden können. Beispielsweise basiert das ROS build System auf cmake und so ist
-eine vorkonfigurierte cmake-Buildatei, genannt \textit{CMakeLists.txt}, in jedem
+eine vorkonfigurierte cmake Buildatei, genannt \textit{CMakeLists.txt}, in jedem
 \textit{package} grundsätzlich enthalten. Eine Zusammenfassung mehrerer
 \textit{packages} wird als \textit{stack} bezeichnet. 
 
 Überträgt man die vorgestellten ROS Begriffe auf Pathcompare so ist
 dieses tool, während der Ausführung,
-ein einzelner \textit{node}, welcher \textit{topics} abbonieren kann, um
+ein einzelner \textit{node}, welcher \textit{topics} abonnieren kann, um
 \textit{messages} zu empfangen. Es wird im Teil Implementierung darauf
 eingegangen, welche \textit{messages} das genau sind. Alle zum Kompilieren und
 Ausführen nötige Dateien sind dabei in zwei \textit{packages} namens
@@ -177,14 +178,13 @@ mittlerweile nicht mehr nur aus reinen GUI Bibliotheken, sondern stellt auch
 z.B. Netzwerk-, SQL- und andere Anwendungs-Bibliothken zur Verfügung.
 
 Ein entscheidender Vorteil des Qt Frameworks ist die gebotene große
-Plattformunabhängigkeit.
-Gleichzeitig wird für alle unterstützten Betriebssysteme, deren nativer Look\&Feel
-verwendet. Gleicher Look\&Feel bedeutet dabei, dass das Erscheinungsbild von GUI Elementen der
-Qt Anwendung dem Erscheinungsbild von GUI Elementen des Betriebssystems
-gleicht.
-Für die Entwicklung von \textit{Pathcompare} waren neben den GUI Bibliotheken
-und schon genannten Vorteilen,
-besonders folgende Konzepte und Funktionen beim Entwickeln von Nutzen: 
+Plattformunabhängigkeit.  Gleichzeitig wird für alle unterstützten
+Betriebssysteme, deren nativer Look\&Feel verwendet. Mit Look\&Feel
+ist gemeint, dass das Erscheinungsbild von GUI Elementen der Qt Anwendung
+dem Erscheinungsbild von GUI Elementen des Betriebssystems gleicht.  Für die
+Entwicklung von \textit{Pathcompare} waren neben den GUI Bibliotheken und schon
+genannten Vorteilen, besonders folgende Konzepte und Funktionen beim Entwickeln
+von Nutzen: 
 
 \begin{itemize}
   \item Signal-Slot Konzept
@@ -193,7 +193,7 @@ besonders folgende Konzepte und Funktionen beim Entwickeln von Nutzen:
   \item Containerklassen mit praktischen Hilfsmethoden
 \end{itemize}
 
-Auf einige dieser Punkte und deren Bezug zu Pathcompare wird nun kurz eingangen.
+Auf einige dieser Punkte und deren Bezug zu Pathcompare wird nun kurz eingegangen.
 
 Das \textit{Signal-Slot} Konzept dient dazu, bestimmte Veränderungen an
 Objekten, beobachtenden Objekten mitzuteilen.  Es realisiert also das
@@ -202,7 +202,7 @@ dem Programmierer einen Verweis auf das beobachtende Objekt, durch einen
 registrierenden Methodenaufruf beim aktualisierenden Objekt, zu hinterlegen.
 Das erleichtert den Entwicklungsprozess, da nicht mehr explizite Methoden zum
 Registrieren von Beobachtern definiert werden müssen.  Stattdessen emittiert,
-im Falle einer mitzuteilenden Aktualisierung, das aktualisierende Object ein
+im Falle einer mitzuteilenden Aktualisierung, das aktualisierende Objekt ein
 sogenanntes Signal, welches durch einen Qt Makro als \textit{signal}
 ausgezeichnet ist. Bei Beobachter Objekten, die auf dieses Signal reagieren
 sollen, wird dann eine als \textit{slot} deklarierte Methode selbständig
@@ -222,7 +222,7 @@ um verschiedenen Makros erweitert. Diese Makros werden dabei nicht immer direkt
 in gültigen C++ Code übersetzt, sondern dienen als Annotationen. Dies hat
 Folgen für den Build Vorgang, denn die mit Annotationen versehenen Klassen
 müssen zuerst, mit dem von Qt bereitgestelltem, \gls{MOC} übersetzt werden.
-Durch den MOC wird aus den mit Annotationnen versehenem C++ Code, erneut C++
+Durch den MOC wird aus den mit Annotationen versehenem C++ Code, erneut C++
 Code erzeugt, der anschließend durch normale Compiler übersetzt werden kann.
 Standardmäßig wird in \textit{Qt} das Build Programm qmake verwendet, welches
 die nötigen Aufrufe des \gls{MOC} automatisch veranlasst. In Hinblick auf
@@ -234,7 +234,7 @@ Buildkonfigurationsdatei, genannt \textit{CMakeLists.txt}, deklariert werden.
 Eine solche CMakeLists.txt Datei ist in jedem ROS package vorhanden und muss
 für diese angepasst werden. Die sonstige Einbindung \textit{Qt} spezifischer
 Libraries und deren Verlinkung mit der Applikation ist in cmake in wenigen
-Zeilen deklariert. Somit war insgesamt die Verwenung von Qt in
+Zeilen deklariert. Somit war insgesamt die Verwendung von Qt in
 \textit{Pathcompare} kein Hindernis für die Verwendung von cmake. Die Nutzung
 von cmake wird darüberhinaus, für große Projekte, von der Qt Dokumentation
 selbst empfohlen.
@@ -251,10 +251,10 @@ entsprechender Dateien zu sorgen.
 %TODO Quelle Plug-in Seite anbringen?
 
 \section{Design der Software}
-Wie bereits im Abschnitt ``Aufgabenstellung'' erwähnt, lag der Hauptfokus beim
+Wie bereits im Abschnitt ``Aufgabenstellung'' erwähnt, lag der Fokus beim
 Design der Pathcompare GUI darauf, einfache Benutzung und übersichtliche
 Darstellung der Informationen, für den Nutzer, zu gewährleisten.  Außerdem
-sollte die Software leicht erweiterbar sein, um flexiblel auf neue
+sollte die Software leicht erweiterbar sein, um flexibel auf neue
 Testbedingungen oder geänderte Anforderungen reagieren zu können.
 Im folgenden Abschnitt wird beschrieben, wie Pathcompare realisiert wurde um
 diese Ziele umzusetzen.
@@ -280,7 +280,7 @@ Die Aufteilung spiegelt sich auch in der GUI wider.
 Hierbei bildet die GUI des Rahmens die Grundlage für die Visualisierung von Plug-ins.
 Dabei wird den Plug-ins, nachdem sie geladen wurden, ein Platz innerhalb des
 Rahmens zugewiesen. Innerhalb dieses zugewiesenen Platzes können sie beliebige
-eigene UI Elemente laden und haben die volle Kontrolle über diese. Insgesamt
+eigene GUI Elemente laden und haben die volle Kontrolle über diese. Insgesamt
 gehören die drei folgenden GUI Elemente zum Rahmen:
 
 \begin{itemize}
@@ -298,14 +298,14 @@ getrennt. Die Topic-Ansicht ist dabei ganz links angeordnet, siehe   .
   \begin{center}
     \fbox{\includegraphics{./graphics/screenshotpathcompare4}}
   \end{center}
-  \caption{Screenshot of Pathcompare}
+  \caption{Hauptansicht von Pathcompare mit geladenen Plug-ins}
   \label{fig:pathcompare}
 \end{figure}
 
 Rechts neben der Topic Übersicht schließt unmittelbar das Plug-in Tab-Fenster
 an. Wird ein Plug-in geladen, wird in diesem Tab-Fenster ein neuer Tab
 angelegt. Die Fläche dieses Tabs wird diesem Plug-in dann zur Verfügung
-gestellt um sein UI darauf aufzubauen. Auf Details bezüglich des Ladens der
+gestellt um seine GUI darauf aufzubauen. Auf Details bezüglich des Ladens der
 Plug-ins und deren Funktionsweise wird in einem folgendem Abschnitt ``Main
 Compare Plug-in'' eingegangen. 
 
@@ -316,15 +316,14 @@ Gruppen werden dann kompakt im Topic Übersicht Fenster angezeigt und können do
 den Nutzer aufgeklappt werden um alle \textit{topics} eines Typs anzuzeigen.
 Dies ermöglicht es, nur solche Topics zu beobachten, die auch
 tatsächlich relevant sind für den Nutzer. 
-Siehe auch \autoref{fig:topics} für eine typische Ansicht der Topic Übersich mit aus- und
+Siehe auch \autoref{fig:topics} für eine typische Ansicht der Topic Übersicht mit aus- und
 eingeklappten Topic Gruppen.
 
-%TODO im Text auf topic übersicht Screenshot verweisen
 \begin{figure}[t]
   \begin{center}
     \fbox{\includegraphics{./graphics/screenshottopics}}
   \end{center}
-  \caption{Topic Übersich}
+  \caption{Topic Übersicht}
   \label{fig:topics}
 \end{figure}
 
@@ -344,38 +343,38 @@ sehr kompakt gestaltet und der horizontale Platzbedarf fällt gering aus.
 
 Die Hauptaufgabe des Rahmens ist es eine Anbindung an ROS zu gewährleisten.
 Diese Anbindung muss es den Plug-ins ermöglichen, benötigte \textit{topics} zu
-abbonieren. Für diese Anbindung ist in \textit{Pathcompare} die Klasse
+abonnieren. Für diese Anbindung ist in \textit{Pathcompare} die Klasse
 \textit{ROSManager} verantwortlich. Im Konstruktor dieser Klasse wird durch
 entsprechende ROS API Aufrufe der \textit{node} \textit{pathcompare}
 erstellt. Dies geschieht durch starten eines separaten Threads, da der ROS Code
-in einer eigenen while-Schleife ausgeführt werden muss, die über die gesamte
+in einer eigenen Endlosschleife ausgeführt werden muss, die über die gesamte
 Lebenszeit des \textit{nodes} bearbeitet wird. Innerhalb dieser Schleife wird
 beispielsweise, das eintreffen neuer \textit{messages} von abonnierten
 \textit{topics} abgearbeitet.
 Zugriff der Plug-ins auf ROS spezifische Funktionalität wird komplett über den
-\textit{ROSManager} gekapselt. Diese Zentralisierung ist deshalb nötig, umd den Zugriff
+\textit{ROSManager} gekapselt. Diese Zentralisierung ist deshalb nötig, um den Zugriff
 der verschiedenen Plug-ins, auf ROS, zu koordinieren. 
 Die wichtigste Methode \textit{subscribeToTopic()}, die durch den ROSManager den Plug-ins zur
 Verfügung steht, ermöglicht es eine als Parameter übergebene \textit{topic} zu
-abbonieren. 
+abonnieren. 
 
 
 Beim Abonnieren einer \textit{topic} wird in ROS typischerweise direkt eine
 Methode als Callback angegeben, welche eingehende \textit{messages} bearbeitet.
-Bei einer einfachen Abbonierung ist es dabei zunächst nicht möglich mehrere
+Beim einfachen Abonnieren ist es dabei zunächst nicht möglich mehrere
 Callbacks zu registrieren.
-In \textit{Pathcompare} bestehtehen in dieser Hinsicht allerdings zwei
-Schwierigkeitn denen bei der Entwicklung begnet werden musste:
+In \textit{Pathcompare} bestehen in dieser Hinsicht allerdings zwei
+Schwierigkeiten denen bei der Entwicklung begegnet werden musste:
 
 \begin{enumerate}
-  \item eventuell abbonieren mehrere Plug-ins eine topic
+  \item eventuell abonnieren mehrere Plug-ins eine topic
   \item topics können von beliebigem \textit{message} Typ sein
 \end{enumerate}
 
 Gelöst wurde das Problem durch die Verwendung von
 \textit{ros::message\_filter::cache}. Objekten dieser Klasse wird bei der
 Initialisierung eine \textit{topic} zugewiesen. Empfangene \textit{messages}
-dieser \textit{topic} werden in einem Ringpuffer mit einstellbarer größe
+dieser \textit{topic} werden in einem Ringpuffer mit einstellbarer Größe
 Zwischengespeichert.  Außerdem erlaubt diese Klasse die Registrierung beliebig
 vieler Callbacks.  Der \textit{ROSManager} sorgt also dafür, dass für jede von
 den Plug-ins benötigte \textit{topic} genau ein
@@ -384,12 +383,12 @@ einen Verweis auf dieses Objekt und können ihren Callback registrieren. Siehe
 dazu auch \autoref{fig:rosmanager}.
 \autoref{fig:rosmanager} ist ein Beispiel für eine Ausführung von Pathcompare
 in Verbindung mit drei Plug-ins. Über das ROS werden die drei topics topic\_x,
-topic\_y und topic\_z angeboten. Durch einen Aufruf von der subscribe Methode
-des ROSManager möchte Plug-in 1 die topic x abbonieren. Der ROSManager legt aus
+topic\_y und topic\_z angeboten. Durch einen Aufruf von der subscribeToTopic Methode
+des ROSManager soll Plug-in 1 die topic x abonnieren. Der ROSManager legt aus
 diesem Grund einen cache an und gibt an das Plug-in 1 einen Verweis darauf
-zurück. Plug-in 2 möchte dieselbe topic abbonieren und erhält ebenfalls einen
+zurück. Plug-in 2 möchte dieselbe topic abonnieren und erhält ebenfalls einen
 Verweis auf denselben cache. Plug-in 3 verlangt jedoch die topic\_y zu
-abbonieren und es erfolgt das anlegen eines neuen caches. 
+abonnieren und es erfolgt das anlegen eines neuen caches. 
 
 \autoref{fig:rosmanager}.
 
@@ -401,7 +400,7 @@ abbonieren und es erfolgt das anlegen eines neuen caches.
   \label{fig:rosmanager}
 \end{figure}
 
-Weitere Methoden die der ROSMaster den Plug-ins zur Verfügung stellt, dienen
+Weitere Methoden die der ROSManager den Plug-ins zur Verfügung stellt, dienen
 beispielsweise dazu, den Plug-ins mitzuteilen, welche topics momentan im ROS
 verfügbar sind. Für eine komplette Übersicht sei an dieser Stelle auch auf die
 Klassendefinition rosmanager.h, die im package pathcompare zu finden ist,
@@ -410,16 +409,16 @@ verwiesen.
 Die Klasse \textit{ROSManager} sorgt außerdem dafür, dass die Topic Übersicht
 regelmäßig aufgefrischt wird. Es wird also dem Nutzer ersichtlich, sollten neue
 \textit{topics} erscheinen oder wenn diese nicht mehr verfügbar sind.  Da die
-ROS \gls{API} keinen event service anbietet um Beobachter zu benachrichtigen,
+ROS \gls{API} keinen Event Service anbietet um Beobachter zu benachrichtigen,
 falls sich der Status von \textit{topics} ändert, stellt der
 \textit{ROSManager} sekündlich eine Anfrage an den \textit{master} nach dem
 aktuellen Stand der topics.  Dies ist gesteuert über einen QTimer in Verbindung
 mit dem Signal-Slot Konzept.
 
-\subsection{Laden von Plugins}
-Das Einbinden von Plugins in den Rahmen steuert die Klasse
+\subsection{Laden von Plug-ins}
+Das Einbinden von Plug-ins in den Rahmen steuert die Klasse
 \textit{PluginLoader}. Sie sucht dabei in einem Verzeichnis nach als Plug-in
-infrage kommenden Dateien. Bei dieser Suche werden generell nur shared Library
+infrage kommenden Dateien. Bei dieser Suche werden generell nur Shared Library
 Dateien betrachtet. Handelt es sich um eine für \textit{Pathcompare} gültige
 Plug-in Datei, fragt der \textit{PluginLoader} zunächst den Namen des Plug-ins
 über eine im Plug-in Interface spezifizierte Methode \textit{getName()} ab.
@@ -444,10 +443,10 @@ implementiert worden, welches beim Starten des Rahmens durch den
 \textit{PluginLoader} geladen und ausgeführt wird.
 
 In der GUI werden dem Nutzer verschiedene Informationen sowie
-Einstellungsmöglichkeiten bezüglich der
+Einstellungsoptionen bezüglich der
 empfangenen Pfaddaten angezeigt. Die Funktionen der einzelnen GUI Elemente
 werden im Folgenden aufgezeigt.
-Insgesamt gibt es drei Bereiche in der GUI, welche sich anhand dreier
+Insgesamt gibt es drei Bereiche in der GUI, welche sich anhand drei
 verschiedener Labels abgrenzen lassen. Von oben nach untern gesehen sind
 dies die Bereiche:
 
@@ -457,8 +456,7 @@ dies die Bereiche:
   \item Results
 \end{enumerate}
 
-%TODO verweis auf screenshot des Plugins einfügen
-%screenshot des Plugins
+%TODO Verweis auf Screenshot des Plugins einfügen
 
 Der Bereich der ``Reference path selection'' beinhaltet eine Combo-Box, welche
 alle über ROS verfügbaren \textit{topics} des Typs nav\_msgs/Path beinhaltet.
@@ -468,23 +466,23 @@ Referenz für die übrigen Pfade gilt. So werden dann die Abstandsberechnungen
 bezüglich dieses Pfades durchgeführt. Die Auswahl des Referenzpfades kann
 jederzeit geändert werden, und die Abstände werden stets neu berechnet.
 
-Unterhalb des ``reference path selection'' Bereichs befindet sich der ``Export
+Unterhalb des ``Reference path selection'' Bereichs befindet sich der ``Export
 results'' Bereich. Er dient dem Nutzer dazu, die berechneten und
 im ``Results'' Bereich visualisierten Ergebnisse, permanent zu speichern.
 Die Speicherung erfolgt dabei als \gls{CSV} Datei. Der Export wird durchgeführt
 wenn der Nutzer den in diesem Bereich vorhandenen Button drückt. 
 Das genaue Format der gespeicherten Daten wird später erläutert.
-%TODO verweis auf den Abschnitt ``format CSV Datei'' anbringen 
+%TODO Verweis auf den Abschnitt ``Format CSV Datei'' anbringen 
 
-Der ``Result'' Bereich dient dazu alle ermittelten Informationen bezüglich der
+Der ``Results'' Bereich dient dazu alle ermittelten Informationen bezüglich der
 Pfade, für den Nutzer anzuzeigen. Die Visualisierung erfolgt hierbei durch eine
-Tabbellenstruktur. In dieser Tabelle wird für jede Path topic ein Spalte
+Tabellenstruktur. In dieser Tabelle wird für jede Path topic ein Spalte
 angelegt.
 In jeder Zeile einer Spalte sind dabei die unterschiedlichen
 Informationen eingetragen.
 Main Compare verhält sich außerdem so, dass topics, welche einmal in
 der Tabelle erfasst wurden auch dort verbleiben. Sollte also eine topic nicht
-mehr im ROS zur verfügung stehen, bleiben die angezeigten Informationen auf
+mehr im ROS zur Verfügung stehen, bleiben die angezeigten Informationen auf
 Basis der zuletzt empfangenen Werte dennoch erhalten. 
 
 In der Tabelle werden für den Nutzer folgende Informationen:
@@ -503,7 +501,7 @@ angezeigt:
 Die angezeigten Informationen werden bei Empfang neuer Pfad \textit{messages} stets
 aktualisiert. Generell gilt dabei, dass jede Path message den kompletten Pfad
 enthalten muss. Pfade können also nicht stückweise übertragen werden. Dieses vorgehen
-bietet die Möglichkeit, dass Pfaddatenen nachträglich geändert werden können.
+bietet die Möglichkeit, dass Pfaddaten nachträglich geändert werden können.
 Also kann beispielsweise die erste Lokalisierung innerhalb eines Pfades zu einem
 späteren Zeitpunkt abgeändert werden. 
 
@@ -513,7 +511,7 @@ empfangen werden, zu analysieren. Denn auf dieser Basis leiten sich alle
 ermittelten Informationen ab. Wie bereits beschrieben sind die messages vom Typ
 \textit{nav\_msgs/Path}, der wie folgt definiert ist:
 
-\begin{lstlisting}[caption=ROS transformation message, label=lst:pathmsgs]
+\begin{lstlisting}[caption=ROS Path message, label=lst:pathmsgs]
 Header header
   uint32 seq
   time stamp
@@ -544,9 +542,9 @@ Path messages zu unterscheiden und dazu die messages ordnen zu können. Die Ordn
 definiert einen Bezugsrahmen innerhalb von ROS, es wird aber im Kontext von
 Main Compare nicht ausgewertet und wird hier deswegen nicht genauer erläutert.
 Die eigentlichen Pfaddaten verbergen sich in dem Array von PoseStamped. Auch
-PoseStamped ist ein zusammengesetzer Typ, bestehend aus einem Header und einer
+PoseStamped ist ein zusammengesetzter Typ, bestehend aus einem Header und einer
 Pose. Die Pose setzt sich aus einem Point und einer Quaternion zusammen.
-Der gefahrende Pfad wird nun dadurch in der Path message abgebildet, indem bei
+Der gefahrene Pfad wird nun dadurch in der Path message abgebildet, indem bei
 jeder durchgeführten Lokalisierung eine PoseStamped angelegt wird. Diese PoseStamped
 hält im Header die Zeit der Lokalisierung und eine Sequenznummer fest. In der
 Pose wird dann der bei der Lokalisierung ermittelte Punkt, als Point eingetragen. Die Quaternion
@@ -556,7 +554,7 @@ allerdings optional und wird in der derzeitigen Version von Main Compare nicht b
 Außerdem lässt sich in \autoref{lst:pathmsgs} erkennen, dass die
 Lokalisierungen dreidimensional erfolgen können. Die von Main Compare
 ausgeführten Berechnungen sind aber auch mit Daten niederer Dimension möglich,
-indem die nicht genutze Dimension auf 0 gesetzt wird. Beispielsweise werden,
+indem die nicht genutzte Dimension auf 0 gesetzt wird. Beispielsweise werden,
 in der derzeitigen Form des Referenzsystems, vom Roboter zweidimensionale
 Lokalisierungsdaten in der x-y Ebene übermittelt und die z Komponente erhält
 immer den Wert 0. Wie schon in Bezug auf die orientation erwähnt, werden nicht alle Komponenten der
@@ -573,15 +571,15 @@ folgende Felder relevant:
 Obwohl nicht alle Felder der Path message genutzt werden, ist dieser message Typ
 für Main Compare die geeignete Wahl, da er in ROS standardmäßig
 definiert ist, was die Definition und deren Verteilung, eines
-eigenen message Typs, vermeidbar macht. Außerdem sind die ungenutzen Felder nicht
+eigenen message Typs, vermeidbar macht. Außerdem sind die ungenutzten Felder nicht
 übermäßig groß und werden die Kapazitäten des Übertragungskanals kaum belasten.
 Vernachlässigt man die ungenutzten Felder des Header, der eine in ROS definierte Standardmessage ist, fallen nur
-zusätzliche 24 Byte für die ungenutze orientation, pro übertragenem Point, an.
+zusätzliche 24 Byte für die ungenutzte orientation, pro übertragenem Point, an.
 Darüberhinaus ist es denkbar, dass die orientation in späteren Versionen von
 Main Compare doch noch betrachtet wird und somit die durchzuführenden
 Änderungen klein ausfallen.
 
-Anhand der oben aufgezählten, genutzen Felder, lässt sich ein Pfad abstrakt durch eine Menge
+Anhand der oben aufgezählten, genutzten Felder, lässt sich ein Pfad abstrakt durch eine Menge
 $M$ von Tupeln modellieren. Dabei setzen sich die Tupel aus einem Zeitstempel und einem dreidimensionalem
 Punkt zusammen. In Anlehnung an die verwendeten Bezeichner in
 \autoref{lst:pathmsgs}, sei $M$ demnach wie folgt definiert:
@@ -591,7 +589,7 @@ Punkt zusammen. In Anlehnung an die verwendeten Bezeichner in
   M := \{ (p.stamp , p.position) \mid p \in poses \}
 \end{equation*}
 
-Die konkrete Repräsentierung dieses Modells erfolgt in Main Compare durch die
+Die konkrete Repräsentation dieses Modells erfolgt in Main Compare durch die
 Klassen \textit{TopicPath} und \textit{Position}. TopicPath repräsentiert dabei
 die Menge $M$. Position repräsentiert ein einzelnes Tupel und enthält somit den
 Zeitstempel und zugehörigen Punkt. Dem Modell entsprechend enthält ein
@@ -616,7 +614,7 @@ TopicPathManager werden in \autoref{fig:topicpathrelated} verdeutlicht.
 
 Anhand der abstrakten Modellierung $M$ eines Pfades, werden im Folgenden, die von
 Main Compare ausgeführten Berechnungen erläutert. In der konkreten
-Repräsentatio erfolgen alle Berechnungen in der Klasse \textit{TopicPathManager}. 
+Repräsentation erfolgen alle Berechnungen in der Klasse \textit{TopicPathManager}. 
 
 \subsubsection{Anzahl der Lokalisierungen}
 Um die Anzahl der Lokalisierungen zu ermitteln wird in Main Compare lediglich die
@@ -682,7 +680,7 @@ Aufgrund dieser schwerwiegenden Nachteile wurde bei der Entwicklung von Main
 Compare ein Ansatz gewählt, der es den Komponenten erlaubt Lokalisierungen zu
 beliebigen Zeitpunkten und mit beliebiger Frequenz durchzuführen. Die einzige
 Voraussetzung ist dabei, dass die Uhren der Komponenten, mit einem gewissen
-tollerierbaren Fehler, synchronisiert werden. Dies sichert, dass die Zeitstempel der
+tolerierbaren Fehler, synchronisiert werden. Dies sichert, dass die Zeitstempel der
 Lokalisierungen zuverlässig vergleichbar sind. Der Abstand wird wie folgt
 ermittelt, siehe dazu auch \autoref{fig:distancetoref} . Für jeden Punkt im zu vergleichenden Pfad $A$
 
@@ -690,11 +688,11 @@ ermittelt, siehe dazu auch \autoref{fig:distancetoref} . Für jeden Punkt im zu 
   \begin{center}
     \fbox{\includegraphics{./graphics/distancetoref}}
   \end{center}
-  \caption{Distanzbestimmung eines Punktes zum Referenzpfad}
+  \caption{Bestimmung der Distanz eines Punktes $p_a$ zum Referenzpfad}
   \label{fig:distancetoref}
 \end{figure}
 
-wird der Abstand zum Refernzpfad $R$ bestimmt. Dazu wird der jeweilige
+wird der Abstand zum Referenzpfad $R$ bestimmt. Dazu wird der jeweilige
 Zeitstempel $z_a$ eines Punktes $p_a$ aus A einem passenden
 Zeitstempelintervall zweier aufeinanderfolgender Punkte $p_{r2}$ , $p_{r1}$ aus $R$ zugeordnet, sodass
 gilt:
@@ -741,7 +739,7 @@ aufgeführt.
 Im folgenden Abschnitt wird das Konzept des Pathcompare Plug-in Mechanismus
 erläutert und aufgezeigt, welche Schritte erforderlich sind, um eigene Plug-ins
 für Pathcompare zu erstellen. Realisiert sind die Plug-ins in Pathcompare
-mithilfe der Qt Plugin API. Diese gibt Strukturen vor, um Plug-ins zu
+mithilfe der Qt Plug-in API. Diese gibt Strukturen vor, um Plug-ins zu
 definieren. Außerdem beinhaltet sie Klassen, um Plug-ins während der Laufzeit
 einer Applikation zu laden.  Bei Verwendung dieser API müssen, um Plug-ins zu
 erstellen, im wesentlichen zwei Schritte ausgeführt werde, dies sind:
@@ -763,12 +761,12 @@ erläutert.  Dieses Plug-in trägt den Namen Camera View. In der derzeitigen
 Version von Pathcompare wird es, ebenso wie Main Compare, beim Starten der
 Anwendung geladen.  Es dient dem Nutzer dazu ROS topics des Typs
 sensor\_msgs/Image zu visualisieren. Dieser Typ von Topic wird beispielsweise
-innerhalb von ROS genutzt um Kamerafeeds der Kinect zur Verfügung zu stellen.
+innerhalb von ROS genutzt um Kamerabilder der Kinect zur Verfügung zu stellen.
 Camera View könnte also bei einer Fahrt des TurtleBots eingesetzt werden um dem
 Tester ein Bild der aktuellen Umgebung des Roboters zu vermitteln. Die
 Gestaltung der GUI dieses Plug-ins fällt einfach aus. Siehe diesbezüglich auch
 \autoref{fig:cameraview}. Der Nutzer kann mit einer
-ComboBox eine topic des Typs sensor\_msgs/Image auswählen. Nach der Auswahl, werden die empfangenden
+Combobox eine topic des Typs sensor\_msgs/Image auswählen. Nach der Auswahl, werden die empfangenden
 Bilder, der gewählten Image topic, eingeblendet. 
 
 \begin{figure}[t]
@@ -779,13 +777,13 @@ Bilder, der gewählten Image topic, eingeblendet.
   \label{fig:cameraview}
 \end{figure}
 
-Wie zuvor beschrieben, muss jedes Pathcompare Plugin das Interface
+Wie zuvor beschrieben, muss jedes Pathcompare Plug-in das Interface
 \textit{ComparatorPluginFactoryInterface} implementieren, so auch Camera View.
 
 Dieses Interface beinhaltet zwei Methoden, siehe dazu auch
 \autoref{lst:factoryinterface}.
 
-\begin{lstlisting}[caption=ROS transformation message, language=C++, basicstyle=\footnotesize, label=lst:factoryinterface]
+\begin{lstlisting}[caption=Interfacemethoden - Plug-ins müssen diese implementieren , language=C++, basicstyle=\footnotesize, label=lst:factoryinterface]
 
         virtual ComparatorPluginPtr createComperatorPlugin(ROSManager * ros_manager, QWidget *tab_widget) const = 0;
         virtual QString getPluginName() const = 0;
@@ -793,14 +791,14 @@ Dieses Interface beinhaltet zwei Methoden, siehe dazu auch
 \end{lstlisting}
 
 Die Methode createComparatorPlugin() ist eine Factorymethode und erzeugt das
-eigenliche Objekt, welches die Funktionalität des Plug-ins beinhaltet. Dieser
-Umweg ist notwendig, da Plug-ins keine typischen Klassenobjekte sind. Denn bei
+eigentliche Objekt, welches die Funktionalität des Plug-ins beinhaltet. Dieser
+Umweg ist notwendig, da Plug-ins keine typischen Objekte sind. Denn bei
 Qt Plug-ins handelt es sich um shared libraries. In einer shared library können
 zwar Methoden ausführbar hinterlegt werden, aber kein eigenständiges Objekte
 mit Attributen existieren. Der Rückgabetyp von createComparatorPlugin() ist
 ComparatorPluginPtr, definiert durch \autoref{lst:returntypedef}.
 
-\begin{lstlisting}[caption=ROS transformation message, language=C++, basicstyle=\footnotesize, label=lst:returntypedef]
+\begin{lstlisting}[caption=Typdefinition von CompoaratorPluginPtr, language=C++, basicstyle=\footnotesize, label=lst:returntypedef]
 //typedef for shared_ptr reference to ComparatorPlugin
 typedef boost::shared_ptr<ComparatorPlugin> ComparatorPluginPtr;
 \end{lstlisting}
@@ -818,7 +816,7 @@ Factory Methode wie folgt implementiert worden, siehe \autoref{lst:create}:
    \label{fig:cameraviewcomparator}
  \end{figure}
 
-\begin{lstlisting}[caption=ROS transformation message, language=C++, basicstyle=\footnotesize, label=lst:create]
+\begin{lstlisting}[caption=Implementierung der createComparatorPlugin in Camera View, language=C++, basicstyle=\footnotesize, label=lst:create]
 ComparatorPluginPtr PathcompareMainFactoryPlugin::createComparatorPlugin(ROSManager * ros_manager, QWidget *tab_widget) const
 {
         ComparatorPluginPtr comp_plugin(static_cast<ComparatorPlugin *>(new CameraView(ros_manager, tab_widget)));
@@ -838,9 +836,9 @@ Die zweite Methode im Plug-in Interface, getName() liefert lediglich den Namen
 des Plug-ins zurück und wird in Pathcompare durch die Klasse PluginLoader
 genutzt.
 
-Zusammenfassend kann man also sagen, dass die eigenlichen Pathcompare Plug-in Interface
-Methoden ohne großen Aufwandt zu implementieren sind. Ein vollständiges
-Referenzbeispiel zur Implementierung neuer Plug-ins ist durch Camera View gegeben.
+Zusammenfassend kann man also sagen, dass die eigentlichen Pathcompare Plug-in Interface
+Methoden ohne großen Aufwand zu implementieren sind. Ein vollständiges
+Beispiel zur Implementierung neuer Plug-ins ist durch Camera View gegeben.
 Zu finden sind dabei alle relevanten Code- und Builddateien im package 
 pathcompareplugins/cameraview.
 

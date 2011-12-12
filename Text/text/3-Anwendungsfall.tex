@@ -1,32 +1,23 @@
 \chapter{Anwendung}
 \label{sec:andwendung}
 In diesem Abschnitt soll ein typischer Anwendugsfall für Pathcompare und dem
-Main Compare Plugin beschrieben werden. 
-
-%\section{Installation}
-%
-%\begin{itemize}
-%  \item Betriebsysteme
-%  \item ROS version - diamondback
-%  \item package structure
-%  \item build calls
-%\end{itemize}
+Main Compare Plug-in beschrieben werden. 
 
 \section{Ausführung Pathcompare}
 
 Pathcompare ist in die ROS packages pathcompare und pathcompareplugins
 aufgeteilt. Die ausführbare Datei der Pathcompare Hauptanwendung befindet sich
 im package pathcompare. Im package pathcompareplugins befinden sich die
-Pahtcompare Plug-ins. Diese werden, wie im vorigen Abschnitten detailiert beschrieben, zur
-Laufzeit dynamisch durch die Hauptanwendung eingebunden.
+Pathcompare Plug-ins. Diese werden, wie im vorigen Abschnitten detailiert
+beschrieben, zur Laufzeit dynamisch durch die Hauptanwendung eingebunden.
 
-Ist ein ROS master gestartet, kann Pathcompare durch den ROS Befehl
+Ist ein ROS master gestartet, kann Pathcompare durch folgenden den ROS Befehl
+ausgeführt werden.
 
 \begin{lstlisting}[caption=starting pathcompare, label=lst:rosrun]
 rosrun pathcompare pathcompare
 \end{lstlisting}
 
-ausgeführt werden.
 Dieser Befehl sucht dabei automatisch die ausführbare Dabei in der pathcompare
 Ordnerstruktur. Alternativ kann diese aber auch manuell ausgeführt werden.
 Dies setzt natürlich voraus, dass Pathcompare vorher erfolgreich kompiliert
@@ -58,21 +49,21 @@ nav\_msgs::path messages aus. Diese werden von den Sensorknoten und dem Roboter
 bereitgestellt. Wann diese messages nach dem Start von Pathcompare gesendet
 werden kann beliebig bestimmt werden. Optimal ist es jedoch, wenn der Roboter
 und die Sensorknoten bereits während der Fahrt in regelmäßigen Abständen
-aktualisierte Pfadnachrichten versenden.  Dadurch erhält der Tester schon
+aktualisierte Path messages versenden.  Dadurch erhält der Tester schon
 während der Testdurchführung von Main Compare ein Feedback welche Tendenzen
 sich durch die gemessenen Werte abzeichnen.
 
 \section{Tests}
 
-\subsection{Topic Übersich}
+\subsection{Topic Übersicht}
 Die Topic Übersicht innerhalb des Rahmens ließ sich unkompliziert Testen, nämlich durch
 starten verschiedener ROS nodes. Diese nodes stellen verschiedene topics zur
 Verfügung, welche in der Topic Übersicht eingeblendet werden sollen. Dies
 funktioniert zuverlässig und es konnten keine Probleme mit der Visualisierung
-festgestellt weden.
+festgestellt werden.
 
-\subsection{Abbonieren von topics durch Plug-ins}
-Das Abbonieren wird, wie im Abschnitt Implementierung genauer beschrieben, durch die
+\subsection{Abonnieren von topics durch Plug-ins}
+Das Abonnieren wird, wie im Abschnitt Implementierung genauer beschrieben, durch die
 Klasse ROSManager vorgenommen. Für die bisher entwickelten beiden Plug-ins Main
 Compare und Camera View traten während durchgeführter Defekttests keine
 Laufzeitfehler auf.
@@ -80,8 +71,10 @@ Laufzeitfehler auf.
 \subsection{Main Compare}
 Eine Schwierigkeit beim Testen von Main Compare bestand zunächst darin,
 geeignete Eingabedaten in Form von path messages zu erhalten. Es konnten jedoch
-Pfaddaten, die durch Testfahren des Roboters entstanden sind,
-genutzt werden. Dadurch konnten während durchgeführtet Defekttest einige Fehler
-identifiziert und beseitigt werden. Allerdings stehen Tests mit sich
-kontinuierlich ändernden Pfaddaten z.B. von den Sensorknoten noch aus.
+Pfaddaten, die durch Testfahrten des Roboters entstanden sind,
+genutzt werden. Dadurch konnten während durchgeführter Defekttests einige Fehler
+identifiziert und beseitigt werden. Allerdings konnten noch keine Tests mit sich
+kontinuierlich ändernden Pfaddaten durchgeführt werden. Theoretisch sollte das
+Verhalten des Programms sich aber nicht gegenüber den statisch Pfaddaten des
+Roboters ändern.
 
