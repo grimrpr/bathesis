@@ -11,10 +11,10 @@ im package pathcompare. Im package pathcompareplugins befinden sich die
 Pathcompare Plug-ins. Diese werden, wie im vorigen Abschnitten detailliert
 beschrieben, zur Laufzeit dynamisch durch die Hauptanwendung eingebunden.
 
-Ist ein ROS master gestartet, kann Pathcompare durch folgenden den ROS Befehl
+Ist ein ROS Master gestartet, kann Pathcompare durch folgenden den ROS Befehl
 ausgeführt werden.
 
-\begin{lstlisting}[caption=starting pathcompare, label=lst:rosrun]
+\begin{lstlisting}[caption=Starten von Pathcompare, label=lst:rosrun]
 rosrun pathcompare pathcompare
 \end{lstlisting}
 
@@ -41,14 +41,14 @@ die in den packages enthaltenen README.txt Dateien.
 
 \section{Ausführung des Masters}
 
-Tests haben gezeigt, dass als Ausführungsort für den ROS master sich dieselbe
+Tests haben gezeigt, dass als Ausführungsort für den ROS Master sich dieselbe
 Maschine anbietet, auf der auch Pathcompare läuft. Der Grund dafür ist, dass
-Pathcompare häufige Anfragen an dem master, zum Auffrischen der Topic
-Übersicht stellt. Läuft der master nicht lokal, sollte zumindest für eine
+Pathcompare häufige Anfragen an dem Master, zum Auffrischen der Topic
+Übersicht stellt. Läuft der Master nicht lokal, sollte zumindest für eine
 Netzwerkanbindung mit möglichst niedriger Latenz gesorgt werden. Es kann
 ansonsten dazu kommen, dass Teile der GUI blockiert werden. Es wurde versucht
 diesem Problem durch caching entgegenzusteuern, indem stets eine Liste der
-aktuellen topics lokal im Programm vorgehalten wird. Die Liste soll dabei in einem
+aktuellen Topics lokal im Programm vorgehalten wird. Die Liste soll dabei in einem
 separaten Thread regelmäßig aktualisiert werden. Allerdings reichte die
 Entwicklungszeit nicht aus, um diese Änderung in die derzeitige Version
 fehlerfrei einzuarbeiten und ist deshalb noch nicht integriert. 
@@ -57,11 +57,11 @@ fehlerfrei einzuarbeiten und ist deshalb noch nicht integriert.
 \section{Konfiguration der Sensorknoten und des Roboters}
 
 Wie im Kapitel Implementierung beschrieben, wertet das Plug-in Main Compare
-nav\_msgs::path messages aus. Diese werden von den Sensorknoten und dem Roboter
-bereitgestellt. Wann diese messages nach dem Start von Pathcompare gesendet
+nav\_msgs::path Messages aus. Diese werden von den Sensorknoten und dem Roboter
+bereitgestellt. Wann diese Messages nach dem Start von Pathcompare gesendet
 werden, kann beliebig bestimmt werden. Optimal ist es, wenn der Roboter
 und die Sensorknoten bereits während der Fahrt in regelmäßigen Abständen
-aktualisierte Path messages versenden.  Dadurch erhält der Tester schon
+aktualisierte Path Messages versenden.  Dadurch erhält der Tester schon
 während der Testdurchführung von Main Compare ein Feedback, welche Tendenzen
 sich durch die gemessenen Werte abzeichnen.
 
@@ -69,10 +69,10 @@ sich durch die gemessenen Werte abzeichnen.
 
 \subsection{Topic Übersicht}
 Die Topic Übersicht innerhalb des Rahmens ließ sich unkompliziert Testen, nämlich durch
-starten verschiedener ROS nodes. Diese nodes stellen verschiedene topics zur
+starten verschiedener ROS Nodes. Diese Nodes stellen verschiedene Topics zur
 Verfügung, welche in der Topic Übersicht eingeblendet werden sollen.
 
-\subsection{Abonnieren von topics durch Plug-ins}
+\subsection{Abonnieren von Topics durch Plug-ins}
 Das Abonnieren wird, wie im Abschnitt Implementierung genauer beschrieben, durch die
 Klasse ROSManager vorgenommen. Für die zwei bisher entwickelten Plug-ins Main
 Compare und Camera View traten während durchgeführter Defekttests keine
@@ -80,7 +80,7 @@ Laufzeitfehler auf.
 
 \subsection{Main Compare}
 Eine Schwierigkeit beim Testen von Main Compare bestand zunächst darin,
-geeignete Eingabedaten in Form von path messages zu erhalten. 
+geeignete Eingabedaten in Form von path Messages zu erhalten. 
 Dieses Problem wurde durch die Nutzung von gespeicherten Pfaddaten, die bei Testfahrten des
 Roboters entstanden sind, gelöst. 
 Dadurch konnten während durchgeführter Defekttests einige Fehler

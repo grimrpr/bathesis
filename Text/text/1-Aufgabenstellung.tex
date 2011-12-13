@@ -31,7 +31,7 @@ Bei der inertial Navigation wird mithilfe von Beschleunigungs- und
 Gyromessungen auf die ausgeführte Bewegung geschlossen. Diese Messungen lassen
 sich durch \gls{MEMS}, die in einer 
 \gls{IMU} zusammengefasst werden, durchführen.
-\gls{MEMS} werden in großen Stückzahlen produziert und sind kostengünstig.
+MEMS werden in großen Stückzahlen produziert und sind kostengünstig.
 Typischerweise sind aber die Messungen, auch bei Stillstand, durch Jitter belastet.
 Dieser kann zwar durch geeignete Filter geglättet werden, lässt sich allerdings
 nicht ganz ausschließen. Auf längere Strecken entsteht durch die Aufsummierung
@@ -53,7 +53,8 @@ Umgebung des Roboters arbeiten. Somit können sie allerdings den beschriebenen
 Drift in der Lokalisierung niemals korrigieren, da sie nicht die Positions auf
 Plausibilität mit der Umgebung abgleichen.  Für das Referenzsystem ist Drift
 aber nicht akzeptabel. Aus diesem Grund erfasst der Roboter Abstände zu
-Hindernissen seiner Umgebung mithilfe einer \textit{Microsoft Kinect}. Die
+Hindernissen seiner Umgebung mithilfe einer \textit{Microsoft Kinect}
+\footnote{\url{http://www.xbox.com/de-DE/kinect}}. Die
 Kinect erstellt mithilfe eines, im infrarot Bereich gestrahltem, optischen
 Musters ein Tiefenbild.  Die Reichweite liegt dabei bei maximal 10 Meter
 Entfernung bei einem Blickwinkel von ca. $59^{\circ}$.
@@ -62,7 +63,7 @@ Tests haben gezeigt, dass die Genauigkeit der Tiefenmessung mit zunehmender
 Entfernung abnimmt. Im Nahbereich von zwei Metern ermöglicht die Kinect eine überraschend präzise
 Distanzmessung. Die Genauigkeit liegt dabei im Zentimeterbereich.  Außerdem verfügt der Roboter
 über eine Karte der Testumgebung. Diese Karte in Kombination mit der
-\textit{Microsoft Kinect} ermöglicht während einer Testfahrt eine Lokalisierung
+Microsoft Kinect ermöglicht während einer Testfahrt eine Lokalisierung
 durch folgende grundlegende Schritte durchzuführen:
 
 \begin{enumerate}
@@ -88,10 +89,10 @@ Entwicklung des Referenzsystems, ausführlich erarbeitet.
 %TODO Simon referenzieren?
 
 Zusammenfassend kann man bezüglich des Referenzsystems feststellen, dass zum autonomen Fahren
-Programme des \gls{ROS} genutzt werden. Außerdem wurde eine Software implementiert,
+Programme des ROS genutzt werden. Außerdem wurde eine Software implementiert,
 die den Roboter vorgegebene Wegpunkte abfahren lässt und dabei gesammelte
-Lokalisierungsdaten innerhalb von \gls{ROS} bereitstellt. Genauer wird im
-Kapitel Implementierung auf die Funktionsweise von \gls{ROS} eingegangen, da
+Lokalisierungsdaten innerhalb von ROS bereitstellt. Genauer wird im
+Kapitel Implementierung auf die Funktionsweise von ROS eingegangen, da
 Pathcompare mit ROS interagiert.
 
 \subsection{Ziele Pathcompares}
@@ -129,8 +130,8 @@ Beziehung stehen.
 \end{figure}
 
 Erkennbar sind dabei zum einen die mobilen Sensorknoten, welche in das \gls{WSN} integriert sind.
-Diese sind am \textit{TurtleBot} Roboter befestigt. Die Sensorknoten und der Roboter
-sind dabei mit einer als ``node'' bezeichneten Komponente versehen. Diese dient zur
+Diese sind am TurtleBot Roboter befestigt. Die Sensorknoten und der Roboter
+sind dabei mit einer als ``Node'' bezeichneten Komponente versehen. Diese dient zur
 Anbindung an das ROS. Während der Roboter direkt druch ROS betrieben wird, sind
 für die mobilen Sensorknoten zusätzliche Softwareadapter nötig, welche die
 Anbindung zu ROS vornehmen. Die Verbindung der Komponenten erfolgt dabei über ein
