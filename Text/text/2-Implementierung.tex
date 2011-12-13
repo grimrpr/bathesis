@@ -399,6 +399,13 @@ abonnieren und es erfolgt das anlegen eines neuen ros::message\_filter::caches.
   \label{fig:rosmanager}
 \end{figure}
 
+Das zweite aufgeführte Problem betrifft die Speicherung der Verweise auf
+ros::message\_filter::cache Objekte im \textit{ROSManager}. Diese haben
+abhängig vom Message Typen der Topic unterschiedliche generische Typen. Dadurch
+kann man sie nicht direkt in einer Liste oder vergleichbaren Datenstruktur
+hinterlegen. Das Problem wurde gelöst, indem der ROSManager void Zeiger auf die
+unterschiedlichen caches speichert.
+
 Weitere Methoden des ROSManagers erlauben es den Plug-ins, im ROS verfügbare
 Topics zu erfragen.
 Für eine komplette Methodenübersich sei an dieser Stelle auf die
